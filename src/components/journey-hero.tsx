@@ -1,241 +1,74 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { Arrow, Botanical, BrandEmblem } from "@/components/illustrations";
+import { Arrow } from "@/components/illustrations";
 
-const scenes = [
-  {
-    src: "/images/rome.webp",
-    alt: "The warm stone arches of Rome’s Colosseum at dusk",
-    title: "The arches of Italy",
-    caption: "where our daydream begins",
-    label: "ITALIAN CHARM",
-  },
-  {
-    src: "/images/mountains.webp",
-    alt: "Snowy Himalayan peaks behind a wooded valley and a small mountain stupa",
-    title: "The quiet of the Himalayas",
-    caption: "a little closer to the clouds",
-    label: "HIMALAYAN SOUL",
-  },
-  {
-    src: "/images/cafe-table.webp",
-    alt: "A warm café table set beside a sunlit window and greenery",
-    title: "A table that feels like home",
-    caption: "and somehow, we’re home",
-    label: "ONE WARM WELCOME",
-  },
-];
+const chapters = ["A Roman daydream", "The hills of Assam", "Above the clouds", "A little closer to home"];
+const clamp = (n: number) => Math.max(0, Math.min(1, n));
+const smooth = (n: number) => { const t = clamp(n); return t * t * (3 - 2 * t); };
 
-const clamp = (value: number) => Math.max(0, Math.min(1, value));
-const ease = (value: number) => {
-  const t = clamp(value);
-  return t * t * (3 - 2 * t);
-};
+function Landscape({ kind }: { kind: "rome" | "hills" | "cafe" }) {
+  return <svg className={`journey-drawing drawing-${kind}`} viewBox="0 0 1440 900" fill="none" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
+    <g stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      {kind === "rome" ? <>
+        <path d="M-40 850V390L380 270V850M0 405L380 293M0 448L380 338M0 625L380 552M0 651L380 579M0 820L380 790M380 270L465 312V850M380 338L465 373M380 552L465 574M380 579L465 600"/>
+        {Array.from({length:7},(_,i)=>{const x=10+i*51;return <g key={i}><path d={`M${x} 590V${440-i*15}q18 -52 36 -10v${145+i*2}M${x} 787V${689-i*10}q18 -48 36 -8v${110+i*2}`}/><path d={`M${x-5} 420v180m0 68v125`}/></g>})}
+        <path d="M1010 900V360h380v540M990 360h420l-210-95zM1030 330h340M1025 380h350M1040 410h320M1030 760h340M1000 790h400M980 820h440M960 850h480"/>
+        {[1045,1110,1250,1315].map(x=><g key={x}><path d={`M${x} 420v330m20-330v330m-27-330h34m-34 330h34`}/></g>)}
+        <path d="M1155 750V500q45-70 90 0v250M450 900V370C450 8 990 8 990 370V900M477 900V370C477 45 963 45 963 370V900M505 900V370C505 83 935 83 935 370V900M450 378h55m430 0h55M470 247l52 17m-2-131 41 35m52-106 25 45m88-73v48m93-22-24 44m100 31-38 35m89 73-51 19"/>
+        <path d="M0 866Q350 810 505 865M935 865q250-42 505 5M580 900l105-400m175 400L755 500" opacity=".35"/>
+      </> : kind === "hills" ? <>
+        <path d="M-60 510L140 300l110 98 170-190 140 130 150-192 160 190 110-84 220 240 130-55 180 120M140 300l25 103 85-5m170-190-35 152 70-32 105 10m150-192-45 167 70-42 135 65"/>
+        <path d="M-100 630Q170 320 460 570T1030 530T1540 600M-50 730Q240 460 550 660T1100 650T1500 660M-30 850Q300 590 650 790T1500 750"/>
+        {Array.from({length:9},(_,i)=><path key={i} d={`M-50 ${680+i*26}Q220 ${430+i*35} 530 ${650+i*27}T1490 ${640+i*28}`} opacity={.8-i*.06}/>)}
+        <path d="M1070 530v-90m-40 45 40-70 43 70m-35 45v-82M240 580v-90m-35 48 35-77 38 77"/>
+      </> : <>
+        <path d="M160 900V200h1120v700M140 200h1160M200 225h1040v85H200zM220 900V410q100-160 200 0v490M1020 900V410q100-160 200 0v490M490 900V420q230-300 460 0v480M510 900V425q210-260 420 0v475M220 590h200m-100-290v600m700-310h200m-100-290v600"/>
+        <path d="M140 315h1160l50 100H90zM100 415q35 40 70 0 35 40 70 0 35 40 70 0 35 40 70 0m580 0q35 40 70 0 35 40 70 0 35 40 70 0 35 40 70 0"/>
+        <path d="M510 790h420m-380 0-20 110m360-110 20 110M645 756h120v-52H645zm120-45q55-8 27 34h-27M670 680q-20-25 0-45m40 45q-20-25 0-45m40 45q-20-25 0-45M100 900l20-130h70l20 130m-60-130v-150m0 80q-85-50-60-100 70 10 60 100m0-40q70-70 80-15-30 50-80 45"/>
+      </>}
+    </g>
+  </svg>;
+}
 
 export default function JourneyHero() {
   const section = useRef<HTMLElement>(null);
-  const [activeScene, setActiveScene] = useState(0);
+  const [chapter, setChapter] = useState(0);
   const [still, setStill] = useState(false);
-
   useEffect(() => {
-    const element = section.current;
-    if (!element) return;
-    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const el = section.current;
+    if (!el) return;
+    const media = matchMedia("(prefers-reduced-motion: reduce)");
     let frame = 0;
-    let previousScene = -1;
-    let previousProgress = -1;
-
-    function update() {
+    const update = () => {
       frame = 0;
-      if (!element) return;
-      const reduced = preference.matches || element.dataset.still === "true";
-      const bounds = element.getBoundingClientRect();
-      const progress = reduced
-        ? 1
-        : clamp(-bounds.top / Math.max(1, bounds.height - window.innerHeight));
-      if (Math.abs(progress - previousProgress) < 0.0001) return;
-      previousProgress = progress;
-      const firstTransition = ease((progress - 0.16) / 0.25);
-      const secondTransition = ease((progress - 0.61) / 0.23);
-      element.style.setProperty("--rome-opacity", String(1 - firstTransition));
-      element.style.setProperty(
-        "--mountain-opacity",
-        String(firstTransition * (1 - secondTransition)),
-      );
-      element.style.setProperty("--cafe-opacity", String(secondTransition));
-      element.style.setProperty("--rome-scale", String(1 + progress * 0.55));
-      element.style.setProperty(
-        "--mountain-scale",
-        String(1.13 - clamp((progress - 0.23) / 0.5) * 0.13),
-      );
-      element.style.setProperty(
-        "--cafe-scale",
-        String(1.07 - secondTransition * 0.07),
-      );
-      element.style.setProperty(
-        "--portal-scale",
-        String(1 + firstTransition * 0.75),
-      );
-      element.style.setProperty(
-        "--portal-opacity",
-        String(1 - firstTransition),
-      );
-      element.style.setProperty("--journey-progress", `${progress * 100}%`);
-      const nextScene = progress < 0.3 ? 0 : progress < 0.74 ? 1 : 2;
-      if (nextScene !== previousScene) {
-        previousScene = nextScene;
-        setActiveScene(nextScene);
-      }
-    }
-
-    function schedule() {
-      if (!frame) frame = window.requestAnimationFrame(update);
-    }
-    window.addEventListener("scroll", schedule, { passive: true });
-    window.addEventListener("resize", schedule);
-    preference.addEventListener("change", schedule);
-    schedule();
-    return () => {
-      window.removeEventListener("scroll", schedule);
-      window.removeEventListener("resize", schedule);
-      preference.removeEventListener("change", schedule);
-      window.cancelAnimationFrame(frame);
+      const p = still || media.matches ? 1 : clamp(-el.getBoundingClientRect().top / Math.max(1, el.offsetHeight-innerHeight));
+      const hills = smooth((p-.15)/.18), clouds = smooth((p-.48)/.16), home = smooth((p-.69)/.18);
+      el.style.setProperty("--rome", String(1-hills));
+      el.style.setProperty("--zoom", String(1+p*2.6));
+      el.style.setProperty("--hills", String(hills*(1-home)));
+      el.style.setProperty("--hill-scale", String(1+clamp((p-.25)/.5)*.35));
+      el.style.setProperty("--cloud", String(clouds*(1-home)));
+      el.style.setProperty("--home", String(home));
+      el.style.setProperty("--progress", `${p*100}%`);
+      setChapter(p<.28?0:p<.55?1:p<.78?2:3);
     };
-  }, [still]);
-
-  function moveToScene(index: number) {
-    const element = section.current;
-    if (!element) return;
-    const offsets = [0, 0.5, 0.95];
-    const top = element.getBoundingClientRect().top + window.scrollY;
-    window.scrollTo({
-      top: top + (element.offsetHeight - window.innerHeight) * offsets[index],
-      behavior: "smooth",
-    });
-  }
-
-  function toggleStill() {
-    const element = section.current;
-    const top = element
-      ? element.getBoundingClientRect().top + window.scrollY
-      : 0;
-    setStill((previous) => !previous);
-    window.requestAnimationFrame(() =>
-      window.scrollTo({ top, behavior: "instant" }),
-    );
-  }
-
-  return (
-    <section
-      ref={section}
-      className="journey-section"
-      data-still={still}
-      aria-label="A journey from Italy to the mountains, and home to Da Duke"
-    >
-      <div className="journey-sticky">
-        <div className="hero shell">
-          <div className="hero-copy">
-            <p className="eyebrow">
-              <span className="little-line" /> A CAFÉ FOR THE UNHURRIED
-            </p>
-            <h1>
-              A little Europe.
-              <br />A lot of <em>home.</em>
-            </h1>
-            <p className="hero-description">
-              European charm. The soul of the tea gardens.
-              <br className="desktop-break" /> And a warm cup that brings it all
-              together.
-            </p>
-            <Link className="button button-green" href="/menu">
-              Find your favourite <Arrow />
-            </Link>
-            <div className="journey-controls">
-              <p className="journey-scroll-note">
-                <span className="scroll-thread" />
-                Scroll slowly. A little journey awaits.
-              </p>
-              <div className="journey-chapters" aria-label="Choose a scene">
-                {scenes.map((scene, index) => (
-                  <button
-                    key={scene.src}
-                    className={activeScene === index ? "active" : ""}
-                    onClick={() => moveToScene(index)}
-                    aria-label={`Scene ${index + 1}: ${scene.title}`}
-                    aria-pressed={activeScene === index}
-                  >
-                    <span>0{index + 1}</span>
-                    <span>{scene.label}</span>
-                  </button>
-                ))}
-              </div>
-              <button className="journey-motion-toggle" onClick={toggleStill}>
-                {still ? "Play the scroll journey" : "Prefer a still moment?"}
-              </button>
-            </div>
-          </div>
-          <div className="hero-visual">
-            <div className="arch-outline" />
-            <div className="hero-arch journey-window">
-              {scenes.map((scene, index) => (
-                <div
-                  key={scene.src}
-                  className={`journey-scene journey-scene-${index}`}
-                  aria-hidden={activeScene !== index}
-                >
-                  <Image
-                    src={scene.src}
-                    alt={scene.alt}
-                    fill
-                    sizes="(max-width:650px) 85vw, 46vw"
-                    loading={index === 0 ? "eager" : "lazy"}
-                    fetchPriority={index === 0 ? "high" : "auto"}
-                    className="journey-photo"
-                  />
-                </div>
-              ))}
-              <svg
-                className="journey-portal"
-                viewBox="0 0 500 600"
-                fill="none"
-                preserveAspectRatio="none"
-                aria-hidden="true"
-              >
-                <path
-                  d="M7 600V252a243 243 0 0 1 486 0v348M27 600V252a223 223 0 0 1 446 0v348"
-                  stroke="#f2e6ce"
-                  strokeWidth="2"
-                />
-                <path
-                  d="M5 258h28m434 0h29M6 244h28m433 0h29M18 172l23 9m16-82 17 16m48-73 10 22m66-53 4 24m72-24-3 24m70 8-10 23m64 31-17 20m46 52-22 10"
-                  stroke="#f2e6ce"
-                  strokeWidth="2"
-                />
-              </svg>
-              <div className="journey-vignette" />
-            </div>
-            <div className="hero-seal">
-              <span>ROOTED IN TEA</span>
-              <BrandEmblem />
-              <span>MADE FOR YOU</span>
-            </div>
-            <p className="image-note">{scenes[activeScene].caption}</p>
-            <Botanical className="hero-botanical" />
-          </div>
-          <span className="hero-side-note">
-            EUROPEAN SOUL · BENGAL AT HEART
-          </span>
-        </div>
-        <div className="journey-progress" aria-hidden="true">
-          <span />
-        </div>
-        <Link href="#welcome" className="journey-skip">
-          Step into the café <Arrow />
-        </Link>
-      </div>
-    </section>
-  );
+    const schedule = () => { if (!frame) frame=requestAnimationFrame(update); };
+    addEventListener("scroll",schedule,{passive:true}); addEventListener("resize",schedule);media.addEventListener("change",schedule);update();
+    return ()=>{removeEventListener("scroll",schedule);removeEventListener("resize",schedule);media.removeEventListener("change",schedule);cancelAnimationFrame(frame);};
+  },[still]);
+  return <section ref={section} className="journey-section" data-still={still} aria-label="From a Roman daydream to the tea hills of Assam">
+    <div className="journey-sticky">
+      <div className="journey-paper"/>
+      <Landscape kind="hills"/><Landscape kind="rome"/>
+      <div className="journey-clouds" aria-hidden="true"><i/><i/><i/></div>
+      <Landscape kind="cafe"/>
+      <div className="journey-intro"><p className="journey-kicker">TWO WORLDS. ONE WARM CUP.</p><p className="journey-opening">Every cup begins<br/>with a <em>little journey.</em></p><span>FROM THE STREETS OF ROME</span></div>
+      <div className="journey-hill-copy"><span>TO THE TEA HILLS OF ASSAM</span><p>A slower rhythm.<br/><em>A deeper connection.</em></p></div>
+      <div className="journey-home-copy" inert={chapter!==3}><p className="journey-kicker">DA DUKE & CHAI</p><h1>A little Europe.<br/>A lot of <em>home.</em></h1><p>European charm. Assam’s tea soul.<br/>A place to stay a little longer.</p><Link href="/menu" className="button button-green">Find your favourite <Arrow/></Link></div>
+      <div className="journey-footer"><span className="journey-chapter">0{chapter+1} <span>/</span> {chapters[chapter]}</span><span className="journey-scroll">SCROLL TO WANDER ↓</span><button onClick={()=>{ const top = section.current ? section.current.getBoundingClientRect().top + window.scrollY : 0; setStill(!still); requestAnimationFrame(()=>window.scrollTo({top,behavior:"instant"})); }}>{still?"Replay journey":"Skip to home ↗"}</button></div>
+      <div className="journey-progress"><span/></div>
+    </div>
+  </section>;
 }
