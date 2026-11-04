@@ -1,39 +1,363 @@
-.journey-section{height:440svh;position:relative;--rome:1;--hills:0;--cloud:0;--home:0;--zoom:1;--hill-scale:1;--progress:0%}
-.journey-sticky{position:sticky;top:0;height:100svh;min-height:520px;overflow:hidden;background:#f4f1e8;color:#282b25;isolation:isolate}
-.journey-paper{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 40%,#fffdf5 0,transparent 65%);z-index:-1}
-.journey-paper:after{content:"";position:absolute;inset:0;opacity:.13;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath fill='%23000' filter='url(%23n)' opacity='.3' d='M0 0h180v180H0z'/%3E%3C/svg%3E")}
-.journey-drawing{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;will-change:transform,opacity}
-.drawing-rome{opacity:var(--rome);transform:scale(var(--zoom));transform-origin:50% 43%}
-.drawing-hills{opacity:var(--hills);transform:scale(var(--hill-scale));color:#3c493a}
-.drawing-cafe{opacity:var(--home);color:#3b4238;mask-image:linear-gradient(#0005 10%,transparent 30%,transparent 58%,#000 80%);transform:scale(1.08)}
-.journey-intro,.journey-hill-copy,.journey-home-copy{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:65px 24px 130px;pointer-events:none}
-.journey-intro{opacity:var(--rome);transform:translateY(calc(var(--hills)*-50px))}
-.journey-kicker,.journey-intro>span,.journey-hill-copy>span{font-size:10px;letter-spacing:3px;font-weight:500}
-.journey-opening,.journey-hill-copy p{font:400 clamp(48px,4.5vw,68px)/.98 "Cormorant Garamond",Georgia,serif;letter-spacing:-2px;margin:30px 0}
-.journey-opening em,.journey-hill-copy em,.journey-home-copy em{font-weight:400;color:#58634d}
-.journey-intro>span{margin-top:25px;font-size:8px;letter-spacing:2px}
-.journey-hill-copy{opacity:calc(var(--hills)*(1 - var(--cloud)));justify-content:flex-start;padding-top:16svh}
-.journey-hill-copy p{font-size:clamp(44px,5vw,72px)}
-.journey-home-copy{opacity:var(--home);background:radial-gradient(ellipse at 50% 45%,#f4f1e8 5%,#f4f1e8e8 28%,transparent 60%)}
-.journey-home-copy h1{font:400 clamp(62px,7.5vw,110px)/.88 "Cormorant Garamond",Georgia,serif;letter-spacing:-3px;margin:26px 0}
-.journey-home-copy>p:not(.journey-kicker){font-size:12px;line-height:1.9;margin-bottom:25px}
-.journey-home-copy .button{pointer-events:auto}
-.journey-clouds{position:absolute;inset:-20%;opacity:var(--cloud);pointer-events:none;filter:blur(20px);transform:translateY(calc(var(--home)*-100px))}
-.journey-clouds i{position:absolute;width:100%;height:60%;background:radial-gradient(ellipse,#fffef9 35%,#fffef9b8 55%,transparent 72%);top:5%;left:-20%}
-.journey-clouds i:nth-child(2){top:40%;left:25%}.journey-clouds i:nth-child(3){top:55%;left:-15%}
-.journey-footer{position:absolute;bottom:28px;left:4%;right:4%;display:flex;justify-content:space-between;align-items:center;gap:16px;font-size:10px;letter-spacing:.5px}
-.journey-chapter span{margin:0 12px;color:#999b8c}.journey-scroll{font-size:8px;letter-spacing:2px}
-.journey-footer button{border:0;background:transparent;font:inherit;color:inherit;padding:12px 0;cursor:pointer;text-decoration:underline;text-underline-offset:5px}
-.journey-progress{position:absolute;bottom:0;height:2px;background:#d8d8cc;width:100%}.journey-progress span{display:block;background:#3d4d37;width:var(--progress);height:100%}
-.journey-section[data-still=true]{height:100svh}.journey-section[data-still=true] .journey-sticky{position:relative}
-@media(max-width:650px){.journey-section{height:360svh}.journey-drawing{width:180%;max-width:none;left:-40%}.journey-opening{font-size:52px}.journey-home-copy h1{font-size:68px}.journey-footer{bottom:18px;font-size:9px}.journey-scroll{display:none}.journey-hill-copy{padding-top:20svh}.journey-kicker{font-size:8px;letter-spacing:2px}.journey-home-copy{background:radial-gradient(ellipse,#f4f1e8 10%,#f4f1e8dd 35%,transparent 75%)}}
-@media(prefers-reduced-motion:reduce){.journey-section{height:100svh;--home:1!important;--rome:0!important;--hills:0!important;--cloud:0!important}.journey-sticky{position:relative}.journey-drawing{will-change:auto}.journey-scroll{display:none}}
-
-/* The header overlays the first scene; the page resumes after the pinned reveal. */
-.site-header.site-header-overlay{position:absolute;inset:0 0 auto;background:transparent;z-index:20}
-.site-header-overlay .header-inner{border-bottom-color:transparent}
-.site-header-overlay .mobile-nav{background:var(--cream)}
-.journey-section{height:480svh}
-@media(max-width:650px){.journey-section{height:400svh}}
-.journey-section[data-still=true]{height:100svh}
-@media(prefers-reduced-motion:reduce){.journey-section{height:100svh}}
+.journey-section {
+  height: 330svh;
+  position: relative;
+  --rome: 1;
+  --hills: 0;
+  --cloud: 0;
+  --home: 0;
+  --zoom: 1;
+  --hill-scale: 1;
+  --progress: 0%;
+}
+.journey-sticky {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  min-height: 620px;
+  overflow: hidden;
+  background: var(--cream);
+  color: #4d5747;
+  isolation: isolate;
+}
+.journey-paper {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(ellipse at 50% 42%, #fcf9ef 0, transparent 70%);
+}
+.journey-drawing {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.drawing-rome {
+  opacity: calc(var(--rome) * 0.63);
+  transform: scale(var(--zoom));
+  transform-origin: 50% 43%;
+}
+.drawing-hills {
+  opacity: calc(var(--hills) * 0.75);
+  transform: scale(var(--hill-scale));
+  color: #59664e;
+}
+.drawing-cafe {
+  opacity: calc(var(--home) * 0.65);
+  color: #4c5c48;
+  mask-image: linear-gradient(
+    #0005 10%,
+    transparent 30%,
+    transparent 58%,
+    #000 80%
+  );
+  transform: scale(1.08);
+}
+.journey-intro,
+.journey-hill-copy,
+.journey-home-copy {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 95px 24px 100px;
+  pointer-events: none;
+  color: var(--ink);
+}
+.journey-intro {
+  opacity: var(--rome);
+  transform: translateY(calc(var(--hills) * -50px));
+  background: radial-gradient(ellipse 350px 220px at 50% 50%, #f3eee4 35%, #f3eee4e6 66%, transparent 100%);
+}
+.journey-kicker,
+.journey-hill-copy > span {
+  font-size: 9px;
+  letter-spacing: 2.3px;
+  font-weight: 600;
+  color: var(--muted);
+}
+.journey-opening {
+  font:
+    400 clamp(44px, 4.7vw, 68px) / 1.01 "Cormorant Garamond",
+    Georgia,
+    serif;
+  letter-spacing: -2px;
+  margin: 25px 0 20px;
+}
+.journey-opening em,
+.journey-hill-copy em,
+.journey-home-copy em {
+  color: #657453;
+}
+.journey-description {
+  font-size: 12px;
+  line-height: 2;
+  max-width: 350px;
+  color: var(--muted);
+}
+.journey-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 25px;
+  pointer-events: auto;
+  margin-top: 28px;
+}
+.journey-actions .button {
+  padding-inline: 20px;
+  min-height: 49px;
+  font-size: 11px;
+  gap: 17px;
+}
+.journey-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 11px;
+  border-bottom: 1px solid #929c85;
+  padding: 12px 0 8px;
+}
+.journey-secondary svg {
+  width: 17px;
+  height: 17px;
+}
+.journey-hill-copy {
+  opacity: calc(var(--hills) * (1 - var(--cloud)));
+  justify-content: flex-start;
+  padding-top: 15svh;
+  background: radial-gradient(ellipse 530px 180px at 50% 26%, #f3eee4ed 35%, #f3eee4aa 65%, transparent 100%);
+}
+.journey-hill-copy p {
+  font:
+    400 clamp(45px, 5.3vw, 75px) / 1.04 "Cormorant Garamond",
+    Georgia,
+    serif;
+  letter-spacing: -1.5px;
+  margin-top: 25px;
+}
+.journey-home-copy {
+  opacity: var(--home);
+  background: radial-gradient(
+    ellipse at 50% 45%,
+    #f3eee4 5%,
+    #f3eee4ed 25%,
+    transparent 64%
+  );
+}
+.journey-home-copy .journey-home-heading {
+  font:
+    400 clamp(42px, 5.3vw, 76px) / 1.03 "Cormorant Garamond",
+    Georgia,
+    serif;
+  letter-spacing: -2px;
+  margin: 25px 0;
+  max-width: 900px;
+}
+.journey-home-copy > p:not(.journey-kicker):not(.journey-home-heading) {
+  font-size: 13px;
+  line-height: 1.9;
+  color: var(--muted);
+}
+.journey-small-brand {
+  font:
+    italic 18px "Cormorant Garamond",
+    Georgia,
+    serif;
+  letter-spacing: 1px;
+  display: block;
+  margin-top: 3px;
+  text-transform: none;
+}
+.journey-clouds {
+  position: absolute;
+  inset: -20%;
+  opacity: var(--cloud);
+  pointer-events: none;
+  filter: blur(20px);
+  transform: translateY(calc(var(--home) * -100px));
+}
+.journey-clouds i {
+  position: absolute;
+  width: 100%;
+  height: 60%;
+  background: radial-gradient(
+    ellipse,
+    #fffdf4 35%,
+    #fffdf4b8 55%,
+    transparent 72%
+  );
+  top: 5%;
+  left: -20%;
+}
+.journey-clouds i:nth-child(2) {
+  top: 40%;
+  left: 25%;
+}
+.journey-clouds i:nth-child(3) {
+  top: 55%;
+  left: -15%;
+}
+.journey-footer {
+  position: absolute;
+  bottom: 25px;
+  left: 4.5%;
+  right: 4.5%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  font-size: 10px;
+  letter-spacing: 0.3px;
+}
+.journey-chapter > span {
+  margin: 0 12px;
+  color: #858b7b;
+}
+.journey-scroll {
+  font-size: 8px;
+  letter-spacing: 1.7px;
+  padding: 15px;
+}
+.journey-footer button {
+  border: 0;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  padding: 12px 0;
+  min-height: 44px;
+  text-decoration: underline;
+  text-underline-offset: 5px;
+}
+.journey-progress {
+  position: absolute;
+  bottom: 0;
+  height: 2px;
+  background: #d3d6c7;
+  width: 100%;
+}
+.journey-progress span {
+  display: block;
+  background: #56694a;
+  width: var(--progress);
+  height: 100%;
+}
+.site-header.site-header-overlay {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 30;
+  background: transparent;
+}
+.site-header-overlay .header-inner {
+  border-bottom-color: transparent;
+}
+.journey-section[data-still="true"] {
+  height: 100svh;
+  min-height: 620px;
+}
+.journey-section[data-still="true"] .journey-sticky {
+  position: relative;
+}
+@media (max-width: 700px) {
+  .journey-section {
+    height: 280svh;
+  }
+  .journey-drawing {
+    width: 180%;
+    max-width: none;
+    left: -40%;
+  }
+  .journey-intro,
+  .journey-home-copy {
+    padding: 100px 24px 110px;
+  }
+  .journey-opening {
+    font-size: clamp(39px, 8.8vw, 56px);
+    letter-spacing: -1.2px;
+    line-height: 1.07;
+    margin-block: 21px 18px;
+  }
+  .journey-kicker {
+    font-size: 8px;
+    letter-spacing: 1.8px;
+  }
+  .journey-description {
+    max-width: 280px;
+    font-size: 12px;
+  }
+  .journey-actions {
+    gap: 19px;
+    flex-direction: column;
+    margin-top: 23px;
+  }
+  .journey-actions .button {
+    font-size: 11px;
+    min-height: 48px;
+    gap: 23px;
+  }
+  .journey-secondary {
+    padding-block: 4px 7px;
+    min-height: 40px;
+  }
+  .journey-footer {
+    bottom: 18px;
+    font-size: 9px;
+    left: 22px;
+    right: 22px;
+  }
+  .journey-chapter {
+    max-width: 160px;
+  }
+  .journey-chapter > span {
+    margin: 0 6px;
+  }
+  .journey-scroll {
+    display: none;
+  }
+  .journey-footer button {
+    font-size: 9px;
+  }
+  .journey-hill-copy {
+    padding-top: 23svh;
+  }
+  .journey-hill-copy > span {
+    font-size: 8px;
+    letter-spacing: 1.5px;
+  }
+  .journey-hill-copy p {
+    font-size: clamp(40px, 9vw, 56px);
+  }
+  .journey-home-copy {
+    background: radial-gradient(
+      ellipse,
+      #f3eee4 10%,
+      #f3eee4e8 35%,
+      transparent 80%
+    );
+  }
+  .journey-home-copy .journey-home-heading {
+    font-size: clamp(38px, 8.5vw, 55px);
+    letter-spacing: -1px;
+  }
+  .journey-home-copy > p:not(.journey-kicker):not(.journey-home-heading) {
+    font-size: 12px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .journey-section {
+    height: 100svh;
+    min-height: 620px;
+    --home: 1 !important;
+    --rome: 0 !important;
+    --hills: 0 !important;
+    --cloud: 0 !important;
+  }
+  .journey-sticky {
+    position: relative;
+  }
+  .journey-scroll {
+    display: none;
+  }
+}

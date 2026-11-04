@@ -36,6 +36,8 @@ The original JPEG downloads are retained locally under ignored `output/source-im
 - Cormorant Garamond: expressive serif headings and italic details.
 - Manrope: quiet, readable supporting text and interface controls.
 - Both font families are bundled via Fontsource with their package license notices.
-- Ivory `#f6f4ec`, forest `#283f32`, muted green `#626e57`, aged brass `#987a4c`.
+- Antique ivory `#f3eee4`, forest `#273a31`, warm parchment `#e5ddcf`, tea leaf `#6a775c`, antique brass `#a18459`. Smaller text uses darker ink for contrast.
 
-The arch, tea cup, leaves, wreath, favicon and social-card layout were created for this website. No music, analytics, advertising, or third-party embeds are loaded.
+The arch, tea cup, leaves, wreath, favicon and social-card layout were created for this website. The brief update adds original SVG ink studies of Rome’s Colosseum, the Eiffel Tower, Florence’s Duomo, Himalayan ridgelines and a tea service. They are interpretive illustrations, not claims about the café’s location. Background motion is CSS-based, offers a pause control and respects reduced motion.
+
+No music, remote analytics, advertising or third-party embeds are loaded. The CMS demonstrates statistics with actual aggregate page and CTA counts kept only in the current browser, as described in the privacy page. Uploaded demo images are processed locally; the seeded photos and their source licences remain unchanged.

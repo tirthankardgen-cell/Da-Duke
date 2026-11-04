@@ -1,492 +1,421 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
-import HeritageSketch from "@/components/heritage-sketch";
+import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
+import { useContent } from "@/components/demo-content";
 import JourneyHero from "@/components/journey-hero";
-import VisitPlanner from "@/components/visit-planner";
+import HeritageSketch from "@/components/heritage-sketch";
+import { Arrow } from "@/components/illustrations";
 import {
+  HomeSections,
   PageIntro,
-  StoryDetails,
-  FullMenu,
-  SpaceDetails,
-  type CafePage,
-} from "@/components/page-sections";
-import { useRef, useState } from "react";
-import {
-  Arrow,
-  ArchDrawing,
-  Botanical,
-  BrandEmblem,
-} from "@/components/illustrations";
-import {
-  categoryImages,
-  menu,
-  menuCategories,
-  type MenuCategory,
-} from "@/lib/menu";
+  DualitySection,
+  HousePreview,
+  RitualSection,
+  PrivatePrompt,
+  GallerySection,
+  VisitSection,
+  VisitDetails,
+} from "@/components/public-sections";
+import { GatheringsList, EventDetails } from "@/components/gatherings";
+import EnquiryComposer from "@/components/enquiry";
+import MediaImage from "@/components/media-image";
+import { pageLinks, type PageId } from "@/lib/content";
+import { safeExternalUrl } from "@/lib/site-utils";
+import { trackDemo } from "@/lib/demo-analytics";
 
-function Wordmark({ light = false }: { light?: boolean }) {
+export type CafePage = PageId | "event" | "privacy" | "terms" | "not-found";
+
+export function Wordmark() {
   return (
     <Link
       href="/"
-      className={`wordmark ${light ? "wordmark-light" : ""}`}
-      aria-label="Da Duke and Chai — home"
+      className="wordmark"
+      aria-label="Da Duke and Chai — return to the landing page"
     >
-      <BrandEmblem className="brand-emblem" />
-      <span>
-        <span className="brand-name">Da Duke</span>
-        <span className="brand-subtitle">and Chai</span>
-      </span>
+      <span className="brand-name">Da Duke</span>
+      <span className="brand-subtitle">and Chai</span>
     </Link>
   );
 }
 
-const gallery = [
-  {
-    src: "/images/cafe-table.webp",
-    alt: "A quiet wooden table by a sunlit window, with cups and climbing greenery",
-    caption: "A corner to call your own",
-  },
-  {
-    src: "/images/cafe-exterior.webp",
-    alt: "An intimate European café terrace with cream façades and green plants",
-    caption: "A little European daydream",
-  },
-  {
-    src: "/images/cafe-interior.webp",
-    alt: "Warm pendant lights and a vintage café sign",
-    caption: "The glow of a slow evening",
-  },
-];
-
-export default function Cafe({ page = "home" }: { page?: CafePage }) {
-  const isHome = page === "home";
-  const [navOpen, setNavOpen] = useState(false);
-  const [category, setCategory] = useState<MenuCategory | "Favourites">(
-    "Favourites",
+function LegalPage({ terms = false }: { terms?: boolean }) {
+  return (
+    <section className="legal-page shell section-spacing">
+      <HeritageSketch kind="florence" />
+      <p className="eyebrow">THE SMALL PRINT · DEMO WEBSITE</p>
+      <h1>
+        {terms ? "A few little" : "A thoughtful"}
+        <br />
+        <em>{terms ? "understandings." : "approach to privacy."}</em>
+      </h1>
+      {terms ? (
+        <div className="legal-prose">
+          <h2>A café concept</h2>
+          <p>
+            This website demonstrates the identity and experience of Da Duke and
+            Chai. Illustrative menu selections and moodboard photography are not
+            a promise of actual products, venue facilities, sourcing or
+            availability. Business details will be published when approved.
+          </p>
+          <h2>Enquiries, not reservations</h2>
+          <p>
+            The occasion composer prepares a message for WhatsApp. The website
+            does not accept bookings, orders or payments. Opening WhatsApp does
+            not send a message or confirm an arrangement. All enquiries require
+            a response and confirmation from the café team.
+          </p>
+          <h2>Content and photographs</h2>
+          <p>
+            Concept photographs are licensed Unsplash images. Brand assets and
+            original illustrations belong to their respective owners. Images are
+            used as atmosphere references and do not document the actual café or
+            its suppliers.
+          </p>
+          <h2>Before launch</h2>
+          <p>
+            Final business terms, contact information and event conditions will
+            be added with the confirmed café details.
+          </p>
+        </div>
+      ) : (
+        <div className="legal-prose">
+          <h2>Your occasion stays yours</h2>
+          <p>
+            Details entered in the enquiry composer are held only while the page
+            is open. They are not sent to a server or stored as a reservation.
+            Choosing a WhatsApp link passes the message to WhatsApp, where its
+            own privacy terms apply. Copying a message puts it on your device’s
+            clipboard.
+          </p>
+          <h2>Local demonstration statistics</h2>
+          <p>
+            This demo records page counts, tab visits, WhatsApp link clicks,
+            directions clicks and a broad screen-size group in this browser’s
+            local storage. It keeps approximately 31 days of counts. There is no
+            tracking identifier, remote analytics service, advertising cookie,
+            precise location collection or recording of enquiry messages. These
+            statistics cannot measure the website’s wider audience.
+          </p>
+          <h2>Demo content editing</h2>
+          <p>
+            The demonstration CMS saves its drafts, published preview content
+            and uploaded images in this browser’s local storage. Its publicly
+            shown demo credentials are only a preview of the sign-in experience,
+            not secure authentication. Do not put confidential information into
+            the demo editor.
+          </p>
+          <h2>External links and hosting</h2>
+          <p>
+            WhatsApp, maps and social links open external services only when
+            selected. Their own privacy policies apply. Images and fonts are
+            served with this website. Hosting providers may process technical
+            request logs under their own policies.
+          </p>
+          <h2>Clearing local data</h2>
+          <p>
+            You can remove demo content and counts by clearing this site’s
+            storage in your browser settings. No browser data is sent to the
+            café. A final privacy policy and a verified contact for privacy
+            requests will accompany the production launch.
+          </p>
+        </div>
+      )}
+    </section>
   );
-  const [galleryIndex, setGalleryIndex] = useState(0);
-  const galleryDialog = useRef<HTMLDialogElement>(null);
-  const navToggle = useRef<HTMLButtonElement>(null);
+}
 
-  function changeGallery(direction: number) {
-    setGalleryIndex(
-      (previous) => (previous + direction + gallery.length) % gallery.length,
-    );
-  }
-
+function PrivatePage() {
+  const { sections, settings } = useContent();
   return (
     <>
-      <a href="#main" className="skip-link">
+      <section className="private-affairs-content section-spacing">
+        <HeritageSketch kind="hills" />
+        <div className="shell private-layout">
+          <div className="occasion-story">
+            <div className="occasion-photo">
+              <MediaImage id={sections.private.image} eager />
+              <span>FOR THE MOMENTS THAT MATTER</span>
+            </div>
+            <h2>
+              A table full
+              <br />
+              <em>of your favourites.</em>
+            </h2>
+            <p>{sections.private.body}</p>
+            <div className="occasion-types">
+              {settings.occasions.map((occasion, i) => (
+                <span key={occasion}>
+                  <i>0{i + 1}</i>
+                  {occasion}
+                </span>
+              ))}
+            </div>
+            {settings.capacity && (
+              <p className="capacity-note">{settings.capacity}</p>
+            )}
+            <p className="image-disclosure">{settings.photoNotice}</p>
+          </div>
+          <EnquiryComposer />
+        </div>
+      </section>
+      <GallerySection />
+    </>
+  );
+}
+
+export default function Cafe({
+  page = "home",
+  slug = "",
+  preview = false,
+}: {
+  page?: CafePage;
+  slug?: string;
+  preview?: boolean;
+}) {
+  const { settings } = useContent();
+  const pathname = usePathname();
+  const [navOpen, setNavOpen] = useState(false);
+  const [paused, setPaused] = useState(false);
+  const navButton = useRef<HTMLButtonElement>(null);
+  const lastTrackedPath = useRef("");
+  const instagram = safeExternalUrl(settings.instagram);
+  const isHome = page === "home";
+
+  useEffect(() => {
+    if (!preview && lastTrackedPath.current !== pathname) {
+      lastTrackedPath.current = pathname;
+      trackDemo("views", pathname);
+    }
+  }, [pathname, preview]);
+
+  return (
+    <div className="site" data-motion={paused ? "still" : "live"}>
+      <a className="skip-link" href="#main">
         Skip to content
       </a>
+      {preview && (
+        <div className="preview-banner">
+          Draft preview · visible in this browser only
+          <Link href="/admin">
+            Return to the editor <Arrow />
+          </Link>
+        </div>
+      )}
       <header
-        id="home"
+        id="top"
         className={`site-header ${isHome ? "site-header-overlay" : ""}`}
+        onClick={(event) => {
+          if ((event.target as Element).closest("a")) setNavOpen(false);
+        }}
         onKeyDown={(event) => {
           if (event.key === "Escape" && navOpen) {
             setNavOpen(false);
-            navToggle.current?.focus();
+            navButton.current?.focus();
           }
         }}
       >
         <div className="shell header-inner">
           <Wordmark />
           <nav className="desktop-nav" aria-label="Main navigation">
-            <Link
-              href="/our-story"
-              aria-current={page === "story" ? "page" : undefined}
-            >
-              Our story
-            </Link>
-            <Link
-              href="/menu"
-              aria-current={page === "menu" ? "page" : undefined}
-            >
-              The menu
-            </Link>
-            <Link
-              href="/the-space"
-              aria-current={page === "space" ? "page" : undefined}
-            >
-              The space
-            </Link>
+            {pageLinks.map((link) => (
+              <Link
+                key={link.id}
+                href={link.href}
+                aria-current={page === link.id ? "page" : undefined}
+              >
+                {link.label}
+              </Link>
+            ))}
           </nav>
-          <Link
-            href="/visit"
-            className="header-visit"
-            aria-current={page === "visit" ? "page" : undefined}
-          >
-            Come on in <Arrow />
+          <Link className="header-cta" href="/private-affairs#enquire">
+            Plan an Occasion
+            <Arrow />
           </Link>
           <button
-            ref={navToggle}
+            ref={navButton}
             className="mobile-nav-toggle"
+            type="button"
             aria-label={navOpen ? "Close navigation" : "Open navigation"}
             aria-expanded={navOpen}
-            aria-controls={navOpen ? "mobile-navigation" : undefined}
+            aria-controls="mobile-navigation"
             onClick={() => setNavOpen(!navOpen)}
           >
             <span className={navOpen ? "is-open" : ""} />
             <span className={navOpen ? "is-open" : ""} />
           </button>
         </div>
-        {navOpen && (
-          <nav
-            id="mobile-navigation"
-            className="mobile-nav"
-            aria-label="Mobile navigation"
-          >
-            {[
-              ["Our story", "/our-story"],
-              ["The menu", "/menu"],
-              ["The space", "/the-space"],
-              ["Come on in", "/visit"],
-            ].map(([label, id]) => (
-              <Link key={id} href={id} onClick={() => setNavOpen(false)}>
-                {label}
-                <Arrow />
-              </Link>
-            ))}
-          </nav>
-        )}
+        <nav
+          id="mobile-navigation"
+          className="mobile-nav"
+          aria-label="Mobile navigation"
+          hidden={!navOpen}
+        >
+          {pageLinks.map((link, i) => (
+            <Link
+              href={link.href}
+              key={link.id}
+              aria-current={page === link.id ? "page" : undefined}
+              onClick={() => setNavOpen(false)}
+            >
+              <span>
+                <i>0{i + 1}</i>
+                {link.label}
+              </span>
+              <Arrow />
+            </Link>
+          ))}
+          <Link href="/gallery" onClick={() => setNavOpen(false)}>
+            <span>
+              <i>06</i>The Gallery
+            </span>
+            <Arrow />
+          </Link>
+        </nav>
       </header>
-
       <main id="main" tabIndex={-1} className={`${page}-page`}>
-        {isHome && <JourneyHero />}
-        {!isHome && <PageIntro page={page} />}
-
-        <div id="welcome" className="heritage-strip">
-          <div className="shell">
-            <span>EUROPEAN SOUL</span>
-            <span className="strip-flower">✳</span>
-            <span>ASSAM IN EVERY SIP</span>
-            <span className="strip-flower">✳</span>
-            <span>BENGAL AT HEART</span>
-            <span className="strip-flower">✳</span>
-            <span>ALWAYS, A WARM WELCOME</span>
-          </div>
-        </div>
-
-        {(isHome || page === "story") && (
-          <section
-            id="story"
-            className="story shell section-spacing"
-            aria-labelledby="story-title"
-          >
-            <HeritageSketch kind="hills" />
-            <div className="story-art">
-              <ArchDrawing />
-              <span>Two worlds. One table.</span>
-            </div>
-            <div className="story-copy">
-              <p className="eyebrow">A MEETING OF TWO WORLDS</p>
-              <h2 id="story-title">
-                Faraway charm.
-                <br />
-                <em>Familiar warmth.</em>
-              </h2>
-              <p>
-                Imagine a quiet European café, with the heart of a North Bengal
-                afternoon. The arches are timeless. The cane chairs feel like
-                home. And the chai? It has stories to tell.
-              </p>
-              <p>
-                Da Duke and Chai brings our love for café culture to the tea
-                traditions of Assam and the easy warmth of Bengali adda. A
-                little place for long conversations and life’s simple pleasures.
-              </p>
-              <Link
-                href={isHome ? "/our-story" : "/the-space"}
-                className="text-link"
-              >
-                {isHome ? "The story behind the cup" : "A place to linger"}{" "}
-                <Arrow />
-              </Link>
-            </div>
-            <Botanical className="story-botanical" />
-          </section>
-        )}
-        {page === "story" && <StoryDetails />}
-
-        {(isHome || page === "menu") && (
-          <section
-            id="menu"
-            className="menu-section section-spacing"
-            aria-labelledby="menu-title"
-          >
-            <div className="shell">
-              <div className="section-heading">
-                <div>
-                  <p className="eyebrow">POURED WITH CARE. MADE WITH LOVE.</p>
-                  <h2 id="menu-title">
-                    A taste of <em>the good life.</em>
-                  </h2>
-                </div>
-                <p>
-                  Something comforting. Something curious.
-                  <br />
-                  Always a reason for one more bite.
-                </p>
-              </div>
-              <div
-                className="menu-filters"
-                role="group"
-                aria-label="Filter the sample menu"
-              >
-                {(["Favourites", ...menuCategories] as const).map((value) => (
-                  <button
-                    key={value}
-                    type="button"
-                    aria-pressed={category === value}
-                    aria-controls="menu-selection"
-                    className={category === value ? "active" : ""}
-                    onClick={() => setCategory(value)}
-                  >
-                    {value}
-                  </button>
-                ))}
-              </div>
-              <div id="menu-selection" aria-live="polite" aria-atomic="true">
-                {category === "Favourites" ? (
-                  <div className="favourites-grid">
-                    {[menu[0], menu[3], menu[6]].map((item, index) => (
-                      <article className="menu-card" key={item.name}>
-                        <div
-                          className={`menu-card-image menu-card-image-${index}`}
-                        >
-                          <Image
-                            src={categoryImages[item.category].src}
-                            alt={categoryImages[item.category].alt}
-                            fill
-                            sizes="(max-width: 650px) 90vw, 30vw"
-                          />
-                          <span>{item.note}</span>
-                        </div>
-                        <div className="menu-card-title">
-                          <h3>{item.name}</h3>
-                          <span>₹{item.price}</span>
-                        </div>
-                        <p>{item.description}</p>
-                      </article>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="category-panel" key={category}>
-                    <div className="category-photo">
-                      <Image
-                        src={categoryImages[category].src}
-                        alt={categoryImages[category].alt}
-                        fill
-                        sizes="(max-width: 650px) 90vw, 38vw"
-                      />
-                    </div>
-                    <div className="category-items">
-                      <p className="eyebrow">{category}</p>
-                      {menu
-                        .filter((item) => item.category === category)
-                        .map((item) => (
-                          <article key={item.name}>
-                            <div className="menu-card-title">
-                              <h3>{item.name}</h3>
-                              <span>₹{item.price}</span>
-                            </div>
-                            <p>{item.description}</p>
-                          </article>
-                        ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-              <div className="menu-bottom">
-                <span>
-                  A little preview of what’s brewing. Sample menu & prices.
-                </span>
-                <Link
-                  className="text-link"
-                  href={isHome ? "/menu" : "#full-menu"}
-                >
-                  Explore the full menu <Arrow />
-                </Link>
+        {isHome ? (
+          <>
+            <JourneyHero paused={paused} onPause={setPaused} />
+            <div id="welcome" className="heritage-strip">
+              <div className="shell">
+                <span>EUROPEAN IN SPIRIT</span>
+                <i aria-hidden="true">✳</i>
+                <span>INSPIRED BY THE TEA HILLS</span>
+                <i aria-hidden="true">✳</i>
+                <span>ALWAYS, A WARM WELCOME</span>
               </div>
             </div>
-          </section>
-        )}
-        {page === "menu" && <FullMenu />}
-
-        {(isHome || page === "space") && (
-          <section
-            id="space"
-            className="space-section shell section-spacing"
-            aria-labelledby="space-title"
-          >
-            <HeritageSketch kind="arches" />
-            <div className="space-heading">
-              <p className="eyebrow">YOUR EVERYDAY LITTLE ESCAPE</p>
-              <h2 id="space-title">
-                Some places make you
-                <br />
-                <em>forget the time.</em>
-              </h2>
-              <p>
-                Sunlit corners. Earthy textures. Conversations without a clock.
-                <br className="desktop-break" /> Settle into the feeling of Da
-                Duke.
-              </p>
-            </div>
-            <div className="gallery-grid">
-              {gallery.map((item, index) => (
-                <button
-                  className={`gallery-item gallery-item-${index}`}
-                  key={item.src}
-                  onClick={() => {
-                    setGalleryIndex(index);
-                    galleryDialog.current?.showModal();
-                  }}
-                  aria-label={`View image: ${item.caption}`}
-                >
-                  <div className="gallery-image">
-                    <Image
-                      src={item.src}
-                      alt={item.alt}
-                      fill
-                      sizes="(max-width: 650px) 82vw, 32vw"
-                    />
-                    <span className="gallery-expand">
-                      <Arrow />
-                    </span>
-                  </div>
-                  <span className="gallery-caption">
-                    <span>0{index + 1}</span>
-                    {item.caption}
-                  </span>
-                </button>
-              ))}
-            </div>
-            {isHome && (
-              <div className="space-page-link">
-                <Link href="/the-space" className="text-link">
-                  Step inside our world <Arrow />
-                </Link>
-              </div>
+            <HomeSections />
+          </>
+        ) : (
+          <>
+            {[
+              "house",
+              "table",
+              "gatherings",
+              "private",
+              "visit",
+              "gallery",
+            ].includes(page) && <PageIntro page={page as PageId} />}
+            {page === "house" && (
+              <>
+                <DualitySection eager />
+                <HousePreview extended />
+                <VisitSection />
+              </>
             )}
-            <p className="gallery-note">
-              A glimpse of the mood. Inspiration imagery for our café concept.
-            </p>
-          </section>
+            {page === "table" && (
+              <>
+                <RitualSection full />
+                <VisitSection />
+              </>
+            )}
+            {page === "gatherings" && (
+              <>
+                <GatheringsList />
+                <PrivatePrompt />
+              </>
+            )}
+            {page === "event" && <EventDetails slug={slug} />}
+            {page === "private" && <PrivatePage />}
+            {page === "visit" && <VisitDetails />}
+            {page === "gallery" && (
+              <>
+                <GallerySection full />
+                <VisitSection />
+              </>
+            )}
+            {(page === "privacy" || page === "terms") && (
+              <LegalPage terms={page === "terms"} />
+            )}
+            {page === "not-found" && (
+              <section className="missing-page section-spacing">
+                <HeritageSketch kind="rome" />
+                <div className="shell">
+                  <p className="eyebrow">404 · A LITTLE OFF THE BEATEN PATH</p>
+                  <h1>
+                    Shall we find
+                    <br />
+                    <em>our way back?</em>
+                  </h1>
+                  <p>
+                    This page seems to have wandered. There’s still a warm
+                    welcome at the house.
+                  </p>
+                  <Link href="/" className="button button-green">
+                    Back to Da Duke and Chai
+                    <Arrow />
+                  </Link>
+                </div>
+              </section>
+            )}
+          </>
         )}
-        {page === "space" && <SpaceDetails />}
-
-        {page !== "visit" && (
-          <section
-            id="visit"
-            className="visit-section"
-            aria-labelledby="visit-title"
-          >
-            <HeritageSketch kind="hills" />
-            <div className="shell visit-inner">
-              <Botanical className="visit-botanical" />
-              <div className="visit-copy">
-                <p className="eyebrow">THERE’S A SEAT WITH YOUR NAME ON IT</p>
-                <h2 id="visit-title">
-                  Come for the chai.
-                  <br />
-                  <em>Stay for a while.</em>
-                </h2>
-                <p>
-                  Bring a friend, a book, or just yourself.
-                  <br />
-                  We’ll bring the warmth.
-                </p>
-                <Link className="button button-cream" href="/visit">
-                  Plan a visit <Arrow />
-                </Link>
-              </div>
-              <div className="visit-arch">
-                <BrandEmblem />
-                <p className="visit-card-title">
-                  A little pause.
-                  <br />A lovely ritual.
-                </p>
-                <div className="visit-rule" />
-                <p>
-                  Inspired by North Bengal
-                  <br />& the tea gardens of Assam
-                </p>
-                <span>VISITING DETAILS COMING SOON</span>
+      </main>
+      <footer className="site-footer">
+        <div className="shell">
+          <div className="footer-top">
+            <div>
+              <Wordmark />
+              <p>
+                A European state of mind.
+                <br />A Himalayan cup of soul.
+              </p>
+            </div>
+            <div className="footer-links">
+              <span className="eyebrow">WANDER A LITTLE</span>
+              <div>
+                {pageLinks.map((link) => (
+                  <Link key={link.id} href={link.href}>
+                    {link.label}
+                  </Link>
+                ))}
+                <Link href="/gallery">The Gallery</Link>
               </div>
             </div>
-          </section>
-        )}
-        {page === "visit" && <VisitPlanner />}
-      </main>
-
-      <footer className="site-footer shell">
-        <div className="footer-top">
-          <Wordmark />
-          <p>
-            European soul. Bengal at heart.
-            <br />A cup of something wonderful.
-          </p>
-          <a href="#home" className="back-to-top">
-            Back to the top <Arrow />
-          </a>
-        </div>
-        <div className="footer-bottom">
-          <p>© {new Date().getFullYear()} Da Duke and Chai</p>
-          <span>A café concept, thoughtfully imagined.</span>
-          <Link href="/menu">Our sample menu</Link>
+            <div className="footer-note">
+              <span className="eyebrow">A LITTLE MORE, SOON</span>
+              <p>
+                A café concept, thoughtfully imagined.
+                <br />
+                The details are still brewing.
+              </p>
+              {instagram && (
+                <a
+                  href={instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-link"
+                >
+                  Instagram
+                  <Arrow />
+                </a>
+              )}
+              <button
+                className="motion-toggle"
+                onClick={() => setPaused(!paused)}
+                aria-pressed={paused}
+              >
+                <span aria-hidden="true">{paused ? "▷" : "Ⅱ"}</span>
+                {paused ? "Resume scenery" : "Pause scenery"}
+              </button>
+            </div>
+          </div>
+          <div className="footer-bottom">
+            <p>© {new Date().getFullYear()} Da Duke and Chai</p>
+            <div>
+              <Link href="/privacy">Privacy</Link>
+              <Link href="/terms">Terms</Link>
+            </div>
+            <a href="#top" className="back-to-top">
+              Back to the top
+              <Arrow />
+            </a>
+          </div>
         </div>
       </footer>
-
-      <dialog
-        className="cafe-dialog lightbox-dialog"
-        ref={galleryDialog}
-        aria-label="Café inspiration gallery"
-        onClick={(e) => {
-          if (e.target === e.currentTarget) galleryDialog.current?.close();
-        }}
-        onKeyDown={(e) => {
-          if (e.key === "ArrowRight") changeGallery(1);
-          if (e.key === "ArrowLeft") changeGallery(-1);
-        }}
-      >
-        <div className="lightbox-inner">
-          <button
-            className="dialog-close"
-            aria-label="Close gallery"
-            onClick={() => galleryDialog.current?.close()}
-          >
-            ×
-          </button>
-          <div className="lightbox-photo">
-            <Image
-              src={gallery[galleryIndex].src}
-              alt={gallery[galleryIndex].alt}
-              fill
-              sizes="90vw"
-            />
-          </div>
-          <div className="lightbox-bottom">
-            <button
-              aria-label="Previous image"
-              onClick={() => changeGallery(-1)}
-            >
-              <Arrow className="rotate-180" />
-            </button>
-            <div aria-live="polite">
-              <p>{gallery[galleryIndex].caption}</p>
-              <span>
-                {galleryIndex + 1} / {gallery.length} · Inspiration imagery
-              </span>
-            </div>
-            <button aria-label="Next image" onClick={() => changeGallery(1)}>
-              <Arrow />
-            </button>
-          </div>
-        </div>
-      </dialog>
-    </>
+    </div>
   );
 }

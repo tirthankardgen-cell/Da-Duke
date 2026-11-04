@@ -2,12 +2,14 @@
   "name": "da-duke-and-chai",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "node --experimental-strip-types --test scripts/site-utils.test.mjs"
   },
   "engines": {
     "node": "22.x"

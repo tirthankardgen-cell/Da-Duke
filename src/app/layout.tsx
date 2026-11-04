@@ -16,7 +16,9 @@ export const metadata: Metadata = {
         ? `https://${process.env.VERCEL_URL}`
         : "http://localhost:3000",
   ),
-  title: "Da Duke and Chai | A Little Europe. A Lot of Home.",
+  title:
+    "Da Duke and Chai | A European state of mind. A Himalayan cup of soul.",
+  robots: { index: false, follow: false },
   description:
     "European café charm meets the tea traditions of Assam and the warmth of North Bengal. Discover Da Duke and Chai — a café for the unhurried.",
   openGraph: {
@@ -41,7 +43,7 @@ export const metadata: Metadata = {
   },
 };
 
-export const viewport: Viewport = { themeColor: "#f6f4ec" };
+export const viewport: Viewport = { themeColor: "#f3eee4" };
 
 export default function RootLayout({
   children,

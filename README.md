@@ -1,66 +1,95 @@
 # Da Duke and Chai
 
-A little Europe. A lot of home.
+A European state of mind. A Himalayan cup of soul.
 
-A complete, responsive café concept built with **Next.js 16, React 19, TypeScript, and Tailwind CSS 4**, ready for Vercel. Warm ivory, forest green, botanical linework, and Roman arches bring European café culture together with the tea traditions of Assam and North Bengal. The original logo is preserved in `old logo.jpeg` and featured on the Story page.
+A responsive **Next.js 16 / React 19 / TypeScript** café demo, updated from [the website brief](da_duke_and_chai_website_brief.md). The public site and a working browser-only CMS are included. **No backend, database, booking service or payment system is connected.**
 
-![Da Duke and Chai — the journey begins in Rome](docs/preview/home-rome.webp)
+![The illustrated Da Duke and Chai landing page](docs/preview/brief-home.webp)
 
-The journey continues [into the Himalayas](docs/preview/home-mountains.webp) and [home to the café](docs/preview/home-cafe.webp). Preview the [Menu](docs/preview/page-menu.webp), [Story](docs/preview/page-our-story.webp), [Space](docs/preview/page-the-space.webp), and [Visit](docs/preview/page-visit.webp) pages, or the [phone homepage](docs/preview/mobile-home-final.webp).
+## Explore the demo
 
-## The five pages
+- `/` — the illustrated Rome-to-the-Himalayas journey, brand duality, house, signature ritual, upcoming gatherings, private occasions, gallery and visit invitation.
+- `/the-house` — an editorial introduction to the concept and atmosphere.
+- `/the-table` — a filterable concept menu, optional prices, availability and featured selections.
+- `/gatherings` and `/gatherings/[slug]` — events published through the demo CMS, India-time dates, current/upcoming/archive sections and cancellation/postponement notices.
+- `/private-affairs` — an optional occasion composer that prepares a WhatsApp message.
+- `/visit-us` — location, hours, directions, contact details and FAQs.
+- `/gallery` — collection filters and a keyboard-accessible image viewer.
+- `/privacy`, `/terms` and a branded not-found page.
+- `/admin` — the content studio. It is intentionally absent from public navigation.
+- `/preview` — a separate view of saved drafts.
 
-- `/` — a scroll-driven journey through Rome, the Himalayas, and a welcoming café table, followed by a short introduction to the café.
-- `/our-story` — the café’s inspiration, tea rituals, and original emblem.
-- `/menu` — category filters, house favourites, and the complete illustrative menu with rupee prices.
-- `/the-space` — an inspiration gallery with a keyboard-accessible image viewer and notes on the atmosphere.
-- `/visit` — a working sample visit planner and answers to common questions.
+The original `/our-story`, `/menu`, `/the-space` and `/visit` URLs redirect permanently to the corresponding new pages. The optional journal is omitted until there is approved editorial content.
 
-The hero follows ordinary page scrolling; it does not trap the wheel or touch gestures. Scene buttons, a skip link, a still-view control, and system reduced-motion support provide alternatives.
+Original line drawings of the **Colosseum, Eiffel Tower, Florence’s Duomo and Himalayan ridges** continue throughout the pages. Motion is restrained, can be paused, and honours the system reduced-motion preference. The wordmark returns to the landing page; there is no “Home” navigation item.
 
-## Run locally
+## Try the CMS
 
-Use **Node.js 22**. The current Tailwind toolchain requires a modern Node runtime; this laptop’s older Node 20.16 default cannot build it.
+Open `/admin` and use the publicly displayed demonstration credentials:
+
+- **Email:** `owner@daduke.demo`
+- **Password:** `ChaiWithDuke`
+
+The “Use demo credentials” button fills the form. This is a demonstration of signing in, **not secure authentication**. Do not enter real passwords or confidential data.
+
+The studio supports:
+
+- **Overview:** actual page views, tab visits, WhatsApp-link clicks, directions clicks, popular pages and screen-size groups from this browser; 7- and 30-day views. No fabricated audience metrics.
+- **Pages & stories:** edit page headlines and introductions, shared section copy and images, House notes, and homepage section order/visibility.
+- **Gatherings:** create and edit drafts, choose uploaded posters, validate unique slugs and date ranges, preview details, feature events, publish/unpublish, and set sold-out/cancelled/postponed states.
+- **The menu:** edit categories, selections, descriptions, optional prices, dietary labels, availability, images and homepage features.
+- **Media library:** upload or replace JPG/PNG/WebP/AVIF images, edit captions and alt text, select collection and crop focus, and reorder the gallery. Uploads are resized locally to at most 1600 pixels on the longest edge.
+- **House settings:** edit contact details, hours, directions, WhatsApp number and template, occasions, venue information and an optional PDF menu link.
+
+**Save draft** keeps changes separate from the website. **Preview** opens a saved draft. **Publish demo** updates the website in this browser, including other open tabs on the same origin. Closing or refreshing a tab retains saved content; clearing site storage removes it. A different device, browser profile, hostname or port has its own fresh demo.
+
+Export the current draft as JSON from House settings before clearing storage or resetting. The demo’s shared credentials, browser storage and public draft previews must be replaced with real authentication, authorization, storage and publishing infrastructure before a production CMS is enabled.
+
+![The content studio](docs/preview/brief-cms.webp)
+
+## Enquiries and content boundaries
+
+The occasion composer does not collect a name or phone number, save its fields, contact the café, reserve a seat or take a payment. With a configured number, it opens a correctly encoded `wa.me` link and the visitor must send the message in WhatsApp. Without a number, it offers an honest message preview.
+
+No address, hours, phone number, operational capacity, event dates or prices have been invented. The initial event collection is empty. The menu is clearly labelled as a concept selection. Licensed stock photography is labelled as a moodboard, not the actual café or its suppliers.
+
+The entire deployment uses `noindex` and a disallowing `robots.txt` while it is a demo. Page metadata and the sitemap are provided, but browser-only edits do not publish server-side metadata. Event links represent data in the current browser and are not shareable event records across devices.
+
+## Run and verify
+
+Use **Node.js 22**. On Windows, ensure Node 22 is first on `PATH` so Next.js workers use the same runtime.
 
 ```sh
 npm ci
 npm run dev
 ```
 
-Open `http://localhost:3000`. For a different port, use `npm run dev -- --port 3100`.
+Open `http://localhost:3000`. An alternative port can be selected with `npm run dev -- --port 3210`.
 
 ```sh
 npm run lint
+npm test
 npm run build
 npm run typecheck
 npm start
 ```
 
-The site needs no API keys or environment variables. Fonts and optimized photographs are bundled locally, so production does not contact Google Fonts or an external image service.
+No API keys or environment variables are required. Fonts, photos and illustrations are served locally. GitHub Actions runs the lint, domain tests, production build and type checks.
 
-## Deploy to Vercel
+To deploy to Vercel, import [tirthankardgen-cell/Da-Duke](https://github.com/tirthankardgen-cell/Da-Duke), use the Next.js preset and Node 22, with `npm ci` and `npm run build`. Deployment automation is separate from this repository’s local preview.
 
-1. Import [tirthankardgen-cell/Da-Duke](https://github.com/tirthankardgen-cell/Da-Duke).
-2. Keep the repository root as the root directory and select the **Next.js** preset.
-3. Select **Node.js 22.x**. Install: `npm ci`. Build: `npm run build`.
-4. Deploy. Vercel serves all five routes directly; no SPA rewrite is needed.
+## Project guide
 
-`vercel.json` contains the framework and build settings. Social metadata uses Vercel’s supplied project URL when available. The source repository does not itself create a Vercel project or domain.
+- `src/lib/content.ts` — typed initial content and the CMS data model.
+- `src/components/demo-content.tsx` — local draft/publication store and cross-tab updates.
+- `src/components/admin/` — demo sign-in, statistics and content/image/event editors.
+- `src/lib/demo-analytics.ts` — local aggregate counts; no messages, visitor identifiers or remote tracking.
+- `src/lib/site-utils.ts` — event timing, URL validation and WhatsApp message composition.
+- `src/components/cafe.tsx`, `public-sections.tsx`, `gatherings.tsx`, `gallery.tsx`, `enquiry.tsx` — public experience.
+- `src/components/journey-hero.tsx`, `heritage-sketch.tsx` — original animated illustration work.
+- `src/app/` — routes, metadata and responsive styles.
+- `scripts/site-utils.test.mjs` — event/date/enquiry contract tests.
 
-## Before using it for a real café
+See [verification notes](docs/VERIFICATION.md) and [image/design references](docs/REFERENCES.md). Browser QA artifacts remain in ignored `output/playwright/`; selected previews are committed in `docs/preview/`.
 
-This is deliberately a sample website. Menu items and prices are illustrative. Photography represents the concept, not the actual café. No opening hours, street address, phone number, or operational booking service has been invented.
-
-The visit planner validates names and dates and shows the chosen afternoon. It does **not** make a reservation, contact the café, or store personal information. Supply confirmed business details and connect a booking service before taking real reservations.
-
-## Editing
-
-- `src/lib/menu.ts` — dishes, descriptions, categories, and prices.
-- `src/components/cafe.tsx` — shared navigation, footer, and café sections.
-- `src/components/journey-hero.tsx` — scroll scenes and animation timing.
-- `src/components/page-sections.tsx` — page introductions and expanded Story/Menu/Space content.
-- `src/components/visit-planner.tsx` — the sample planner and visit FAQs.
-- `src/app/globals.css`, `pages.css`, `journey.css` — styling and responsive behaviour.
-- `public/images/` — optimized local assets, including the social sharing image.
-
-See [design and image references](docs/REFERENCES.md) and [verification notes](docs/VERIFICATION.md). Browser captures are written to ignored `output/playwright/`; selected finished previews are included under `docs/preview/`.
+Before a real launch, supply the brief’s approved business details, menu, photography, events and legal text, then replace demo access/local persistence with the separately scoped backend.

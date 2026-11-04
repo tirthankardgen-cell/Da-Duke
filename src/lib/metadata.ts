@@ -1,0 +1,42 @@
+import type { Metadata } from "next";
+import { initialContent, pageLinks, type PageId } from "@/lib/content";
+
+export const siteUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL
+  ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+  : process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : "http://localhost:3000";
+
+export function pageMetadata(id: PageId, path: string): Metadata {
+  const title =
+    id === "home"
+      ? "Da Duke and Chai | A European state of mind. A Himalayan cup of soul."
+      : `${pageLinks.find((link) => link.id === id)?.label || "The Gallery"} | Da Duke and Chai`;
+  const description = initialContent.pages[id].description;
+  return {
+    title,
+    description,
+    alternates: { canonical: path },
+    openGraph: {
+      title,
+      description,
+      url: path,
+      type: "website",
+      locale: "en_IN",
+      images: [
+        {
+          url: "/images/social-card.jpg",
+          width: 1200,
+          height: 630,
+          alt: "Da Duke and Chai",
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ["/images/social-card.jpg"],
+    },
+  };
+}

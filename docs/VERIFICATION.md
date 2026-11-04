@@ -1,45 +1,72 @@
 # Verification
 
-Verified locally on 4 November 2026 against the production build, using Node 22.23.4 and Google Chrome through Playwright CLI.
+Verified locally on **5 November 2026 (Asia/Kolkata)** using **Node 22.23.4**, the Next.js production build and Google Chrome through Playwright CLI. This covers the brief update and frontend CMS demo, not a production backend or live hosting deployment.
 
 ## Build and routes
 
-- Clean `npm ci` completed successfully with Node 22.
-- `npm run lint` passed with no errors or warnings.
-- `npm run build` passed; all five pages are statically prerendered by Next.js.
+- `npm run lint` passed.
+- `npm test` passed all **9 domain tests**.
+- `npm run build` passed, including Next.js compilation and TypeScript checks.
 - `npm run typecheck` passed.
-- `/`, `/our-story`, `/menu`, `/the-space`, and `/visit` all returned HTTP 200 when opened directly.
-- Every page has its own title and exactly one primary heading. All visible desktop image assets loaded successfully.
+- `git diff --check` passed.
+- The public pages, CMS sign-in and browser-local event fallback load directly. An unknown ordinary route returns HTTP 404 with the branded not-found page.
+- The four original URLs return HTTP **308**: `/our-story` to `/the-house`, `/menu` to `/the-table`, `/the-space` to `/gallery`, and `/visit` to `/visit-us`.
+- `robots.txt` disallows crawling of the demo. `sitemap.xml` lists nine public page URLs and excludes admin, preview and local event records. Its origin uses Vercel's deployment environment when available, with `http://localhost:3000` as the local fallback.
+
+The domain tests cover event start/end boundaries, draft and invalid-date exclusion, chronological selection, unique slugs, WhatsApp URL/message encoding, the date boundary in India, enquiry-field validation, allowed URL protocols, and cancelled/postponed event grouping.
 
 ## Browser and accessibility checks
 
-The final pass covered all five pages at **320, 390, 768, and 1440 pixels wide**: 20 page/viewport combinations. After finite entrance animations settled, there were:
+The public-route matrix covered **48 route/viewport combinations**: `/`, `/the-house`, `/the-table`, `/gatherings`, `/private-affairs`, `/visit-us`, `/gallery`, `/privacy`, `/terms`, the branded 404, a missing browser-local event, and CMS sign-in, each at **320, 390, 768 and 1440 pixels wide**.
 
-- No horizontal document overflow.
-- No JavaScript page errors.
-- No violations reported by axe-core 4.10.3.
+The signed-in CMS matrix covered **24 view/viewport combinations**: overview, pages, gatherings, menu, media and settings at the same four widths. Checks included document overflow, JavaScript page errors, visible image loading, primary headings where applicable, and axe-core WCAG A/AA rules through WCAG 2.2.
 
-Automated checks supplement visual review; they are not a comprehensive accessibility certification. Full desktop pages, phone layouts and all three hero scenes were visually reviewed. The final pass includes fixes for muted-text contrast, a botanical illustration extending one pixel past the tablet viewport, and an unnecessarily nested complementary landmark.
+These passes exposed muted-text contrast issues and hidden file inputs causing media-editor overflow. Both were corrected. A **16-combination targeted production recheck** of affected pages and CMS views then reported zero issues. No JavaScript page errors or broken visible images remained in the checked flows.
 
-## Interaction checks
+Desktop and phone screenshots were visually reviewed, including all three illustrated hero chapters, inner-page scenery and the CMS. The final build includes a soft ivory overlay behind hero text to keep drawings from competing with headings; fresh screenshots were captured after restarting that build.
 
-- The hero scene buttons scroll to Italy, the Himalayas and the café; the photograph, arch transformation, caption and progress indication update together.
-- The still-view button shows the café and removes the extended scrolling section.
-- Emulated `prefers-reduced-motion: reduce` uses a still café image with no sticky sequence or extra scroll distance.
-- All three menu categories display the correct three dishes; the complete menu remains available on the Menu page.
-- Desktop navigation and the mobile navigation both change routes. Selecting a mobile link closes the navigation.
-- The gallery opens, advances with the Right Arrow key, and closes with Escape. Focus returns to the gallery image button. The open gallery also passed axe.
-- Empty visit forms are rejected. Past dates are rejected by the date field. A valid first name, future date and party size produce the correct preview.
-- The preview explicitly states that no table has been reserved. Both localStorage and sessionStorage remained empty after submission.
+Automated checks supplement manual review and do not constitute a complete accessibility certification. Firefox, Safari, physical iOS/Android devices, screen readers and real-user Core Web Vitals were not tested in this pass.
 
-## Deployment and sample boundaries
+## Public interaction checks
 
-The checked-in configuration uses the Next.js Vercel preset, Node 22, `npm ci`, and `npm run build`. A GitHub Actions workflow runs the build, lint, and type checks. Local verification does not by itself verify a live Vercel deployment.
+- All three scroll-journey scenes appear at the intended positions. The still-view control removes the extended scroll sequence and stops decorative animation. Emulated system reduced motion also removes extra scrolling and running animation.
+- Mobile navigation changes routes, closes after selection, supports Escape and restores focus to its toggle. There is no Home navigation item.
+- Menu category filtering updates visible selections and can restore all selections.
+- Gallery images open in a dialog, advance with arrow keys and close with Escape; focus returns to the originating image. The open dialog passed axe checks.
+- The enquiry composer rejects past dates. With no configured number, its dialog previews the message without claiming that anything was sent or reserved; the dialog passed axe checks.
+- With a configured demonstration number, WhatsApp URLs contain the validated international number and correctly encoded message. No messages were sent during QA. Private enquiry fields were not persisted to browser storage.
 
-There is no booking backend, customer account system, live menu feed, map address, or payment flow. The visit form does not transmit or persist personal details. Opening and contact details must be provided before launch as a real business site.
+## CMS workflow checks
 
-The production dependency audit (`npm audit --omit=dev`) reported **zero vulnerabilities**. The full audit reports 16 moderate findings in the development-only ESLint/minimatch dependency chain. ESLint 9 is retained for compatibility with Next.js’s bundled ESLint plugins; force-upgrading those transitive packages was not applied.
+- The displayed demo credentials open the studio. The interface clearly explains that this is a browser-only sign-in demonstration.
+- Text changes can be saved as drafts and previewed separately. Publishing updates the public site, including another tab on the same origin. Drafts do not change the published view until publication.
+- Homepage section visibility and edited menu prices/selections appear in the corresponding public views after publishing.
+- Local image upload, required alt text, captions, gallery collection and crop focus work. Image replacement was published and verified on The House page against the production build.
+- Event creation rejects an end before the start. A valid fixture can be published, opened at its detail URL and displayed in India time; cancellation and archive states were also exercised.
+- WhatsApp settings reject invalid numbers and allow a valid encoded link preview.
+- Test fixture events, image replacements and content changes were reset to the initial concept before final screenshots. They were confined to the QA browser and are not seeded repository content.
+
+## Demo boundaries and handover
+
+There is **no backend, database, secure authentication, role enforcement, shared upload storage or remote analytics service**. Drafts, published content and resized uploads live in this browser's localStorage. The publicly shown login credentials and browser-only publishing demonstrate the workflow; they do not protect real business data.
+
+Statistics use actual local aggregate page and CTA activity. They do not represent the full site's audience or confirmed WhatsApp messages/bookings. New browsers start with empty counts. The overview screenshot contains activity generated while exercising this demo.
+
+Saved content is scoped to the browser and origin. Event URLs therefore do not share records with another browser/device, and server-rendered metadata does not reflect browser-only edits. A missing `/gatherings/[slug]` renders an explanatory fallback with HTTP 200 because only the browser can determine whether that local record exists. The whole demo is `noindex`.
+
+The initial event collection and unconfirmed contact details remain empty. Menu selections and licensed concept photography are labelled appropriately. No operational prices, dates, address, hours, capacity or sourcing claims have been invented. The enquiry composer has no reservation, checkout or payment flow.
+
+Before clearing storage, export the draft and its images as JSON from House settings. The demo reset restores the original content; it does not change repository files. A real launch needs approved business content and separately scoped authentication, persistence, asset storage, analytics and publishing services.
+
+GitHub Actions runs lint, the domain tests, the production build and type checks on Node 22. Local checks and a Git push alone do not prove a live Vercel deployment.
 
 ## Captures
 
-Selected compressed previews are committed under `docs/preview/`. Original browser screenshots and research snapshots are retained locally under ignored `output/playwright/` and `.playwright-cli/`.
+Selected compressed previews are committed in `docs/preview/`:
+
+- [Illustrated landing page](preview/brief-home.webp)
+- [The House with background illustrations](preview/brief-house.webp)
+- [Mobile landing page](preview/brief-mobile.webp)
+- [CMS overview with local activity](preview/brief-cms.webp)
+
+Full browser captures and QA scripts remain locally in ignored `output/playwright/` and `.playwright-cli/`.

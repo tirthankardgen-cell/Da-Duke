@@ -1,18 +1,150 @@
-/** Decorative ink studies, kept out of the accessibility tree. */
-export default function HeritageSketch({ kind = "hills" }: { kind?: "hills" | "arches" }) {
-  return <div className={`heritage-sketch heritage-sketch-${kind}`} aria-hidden="true">
-    <svg viewBox="0 0 800 400" fill="none" focusable="false">
-      <g stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
-        {kind === "hills" ? <>
-          <path d="M-40 250 100 115l80 65L320 45l130 145 95-85 180 130 100-50M100 115l25 72 55-7M320 45l-30 105 50-20 110 60"/>
-          {[0,1,2,3,4,5].map(i=><path key={i} d={`M-20 ${265+i*25}Q160 ${155+i*24} 370 ${275+i*18}T830 ${230+i*25}`}/>)}
-          <path d="M600 250v-75m0 35q-40-40-45-10 15 25 45 10m0-15q40-40 45-10-15 25-45 10"/>
-        </> : <>
-          <path d="M80 400V140L710 60v340M80 160 710 80M80 195l630-75M80 305l630-55M80 325l630-55M55 400h680"/>
-          {[0,1,2,3,4,5,6].map(i=>{const x=105+i*85;return <path key={i} d={`M${x} ${290-i*7}v-${70+i*2}q25-60 50-5v${71+i*2}m-50 115v-28q25-47 50-5v34`}/>})}
-          <path d="M65 140 710 45l30 20v335M65 140v260"/>
-        </>}
+import type { SketchKind } from "@/lib/content";
+
+/** Original ink studies: Himalayan ridgelines, the Colosseum, Eiffel Tower and Florence's Duomo. */
+export function InkStudy({
+  kind,
+  className = "",
+}: {
+  kind: SketchKind;
+  className?: string;
+}) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 800 440"
+      fill="none"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <g
+        stroke="currentColor"
+        strokeWidth="1.15"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        {kind === "hills" && (
+          <>
+            <g className="ink-distant">
+              <path d="m-35 264 138-140 75 62L311 44l124 143 99-82 169 137 119-51M103 124l23 69 52-7M311 44l-26 109 51-23 99 57m99-82-26 87 46-31 54 38" />
+              <path
+                d="m-20 252 120-121 80 62L310 52l122 142 104-83 169 139"
+                opacity=".32"
+              />
+              <path
+                d="m311 44-6 110m-24-17-19 44m73-51 40 69m-244-20 8 34m395-59 30 61"
+                opacity=".6"
+              />
+            </g>
+            <path d="M-40 322Q142 158 373 283T841 256M-35 349Q157 239 357 323T846 299" />
+            {[0, 1, 2, 3, 4, 5, 6].map((i) => (
+              <path
+                key={i}
+                d={`M-20 ${351 + i * 18}Q158 ${245 + i * 23} 370 ${332 + i * 16}T831 ${292 + i * 20}`}
+                opacity={0.9 - i * 0.085}
+              />
+            ))}
+            <path d="M625 300v-76m-32 43 32-70 35 68m-51-31 16-35 19 36m-9 62v-54M667 316v-52m-23 33 23-54 27 53" />
+            <g className="ink-cloud">
+              <path d="M80 92q17-12 34-1m16 6q24-8 47 2M450 70q14-12 30-2m-13 12q21-6 42 2M627 106q28-7 54 5" />
+            </g>
+          </>
+        )}
+        {kind === "rome" && (
+          <>
+            <path d="M75 390V156q243-130 620-41v275M67 162q250-137 641-47l-13 14M75 187q243-129 620-40M75 218q243-119 620-43M75 298q246-104 620-42M75 322q245-96 620-45M62 394q319-14 667 6" />
+            <path
+              d="M80 158q247-129 611-41M76 192q251-122 619-40M77 303q245-103 617-41"
+              opacity=".4"
+            />
+            {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => {
+              const x = 94 + i * 59;
+              const y = 167 - Math.sin((i / 9) * Math.PI) * 55;
+              return (
+                <g key={i}>
+                  <path
+                    d={`M${x} ${y + 86}v-49q16-33 31-2v44M${x} ${y + 172}v-47q16-31 31-2v43M${x - 5} ${y - 6}v92m0 13v73M${x - 6} ${y + 79}l43-5m-41 85 38-3`}
+                  />
+                  <path d={`m${x + 7} ${y + 37}v29m51 70v13`} opacity=".4" />
+                </g>
+              );
+            })}
+            <path d="M75 155v238m627-279v281M369 91v-8l40-2 2 9m-213 12 2 7m374-23v7M82 365q202-72 610-40" />
+            <path
+              d="m26 411 60-3m32 9 45-1m388-7 67 3m43-7 97 5"
+              opacity=".5"
+            />
+          </>
+        )}
+        {kind === "paris" && (
+          <>
+            <path d="M396 29v-19m8 19v-19M390 48h20l-5-19h-10zM390 48q-3 104-28 188l-40 83-65 81h60q33-88 83-87 52 0 84 87h61l-65-81-41-83q-25-86-29-188" />
+            <path d="m399 52-7 102-17 82-39 86-52 77m120-347 7 102 17 82 39 86 52 77M377 149h47v10h-47zM350 234h101v13H350zM312 319h177v16H312zM242 402h317v11H242" />
+            {[0, 1, 2, 3, 4].map((i) => (
+              <path
+                key={i}
+                d={`m${391 - i * 4} ${72 + i * 30} ${18 + i * 8} 27m-${18 + i * 8} 0 ${18 + i * 8}-27`}
+                opacity=".7"
+              />
+            ))}
+            <path d="m373 252 31 53 27-53m-74 26 86 27m-103 39 19 26-36 6m138-32-19 26 36 6M49 401v-72h96v73m-107-74 59-29 58 29m-88 16v42m34-42v42m19-42v42M603 402v-95h129v95m-141-97 73-36 80 36m-123 16v57m34-57v57m34-57v57m24-57v57" />
+            <path
+              d="M17 418q189-10 352 0t431-4M16 276q63-37 116-10m522-93q55-24 92 7"
+              className="ink-cloud"
+            />
+            <path d="m570 93 13-6 13 6m-423 76 10-7 13 5" />
+          </>
+        )}
+        {kind === "florence" && (
+          <>
+            <path d="M195 399V262h352v137M182 263h379v-16H182zM227 246c8-80 46-136 144-174 100 38 139 96 147 174M251 245c8-81 45-134 120-173 73 46 110 101 123 173M298 245c4-80 24-136 73-173 50 45 69 101 73 173M371 72v175M347 73V41h48v32m-54-35 30-19 30 19M366 19V5m10 14V5" />
+            <path d="M210 285h322M210 309h322M195 331h352M214 357h313M217 385h313M182 403h379" />
+            {[0, 1, 2, 3, 4, 5].map((i) => (
+              <path
+                key={i}
+                d={`M${225 + i * 55} 305v-26q13-27 26 0v26m-26 79v-34q13-27 26 0v34`}
+              />
+            ))}
+            <path d="M590 402V106h70v296M581 107h88V92h-88zm9-17V65h70v25M604 65V42h42v23M599 42l27-23 26 23M590 159h70m-70 58h70m-70 60h70m-70 57h70M607 145v-19q18-24 36 0v19m-36 57v-20q18-24 36 0v20m-36 57v-20q18-24 36 0v20m-36 57v-20q18-24 36 0v20m-36 78v-45q18-24 36 0v45" />
+            <path d="M44 402V297l66-44 60 44v105M35 298h145M60 323h92m-92 24h92m-92 26h92M19 416h754M712 400v-60m0 22q-30-38-37-8 11 22 37 8m0-12q34-35 40-7-10 23-40 7" />
+            <path
+              d="M256 234c16-80 50-115 91-142m111 143c-10-58-33-106-68-141"
+              opacity=".4"
+            />
+          </>
+        )}
+        {kind === "tea" && (
+          <>
+            <path d="M95 365q215-35 520-6M153 376h416M226 239h277v55q-3 71-140 74-137-1-137-74zM216 238q151-16 298 0m-261 24q102 21 221 0M503 253q116-25 91 44-17 44-100 34M500 266q76-19 63 17-11 25-64 23" />
+            <g className="ink-steam">
+              <path d="M305 210c-38-53 42-68 7-116m57 115c-37-57 39-70 13-132m51 132c-24-40 36-58 14-97" />
+            </g>
+            <path d="M637 392c-17-84-11-146 30-221m-19 37q-67-62-55-109 65 12 55 109m-12 66q69-58 105-23-32 49-105 23m1 53q-83-13-105-66 61-17 105 66M74 354q43-75 39-179m-2 40q-65-2-64-64 51 15 64 64m-9 52q68-36 86-4-20 38-86 4" />
+            <path
+              d="m261 297 4 26m10-13 2 22m8-11 4 18m172-39-5 18m-12-7-6 14"
+              opacity=".5"
+            />
+          </>
+        )}
       </g>
     </svg>
-  </div>;
+  );
+}
+
+export default function HeritageSketch({
+  kind = "hills",
+  side = "right",
+  className = "",
+}: {
+  kind?: SketchKind;
+  side?: "left" | "right";
+  className?: string;
+}) {
+  return (
+    <div
+      className={`heritage-sketch sketch-${kind} sketch-${side} ${className}`}
+      aria-hidden="true"
+    >
+      <InkStudy kind={kind} />
+    </div>
+  );
 }
