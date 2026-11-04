@@ -1,0 +1,500 @@
+.desktop-nav a[aria-current="page"]::after {
+  width: 100%;
+}
+.header-visit[aria-current="page"] {
+  background: #e9eadd;
+}
+.page-intro {
+  padding-block: 27px 73px;
+  text-align: center;
+  position: relative;
+}
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 9px;
+  color: #626e57;
+  margin-bottom: 50px;
+  text-align: left;
+}
+.breadcrumb a:hover {
+  text-decoration: underline;
+}
+.page-intro > .eyebrow {
+  color: #626e57;
+  margin-bottom: 23px;
+  font-size: 9px;
+}
+.page-intro h1 {
+  font-size: clamp(57px, 6vw, 83px);
+  line-height: 1.025;
+  letter-spacing: -2.5px;
+}
+.page-intro-description {
+  max-width: 440px;
+  margin: 24px auto 0;
+  font-size: 12px;
+  color: #626e57;
+  line-height: 1.95;
+}
+.intro-botanical {
+  position: absolute;
+  width: 86px;
+  bottom: 53px;
+  right: 24px;
+  color: #8f987d;
+  opacity: 0.45;
+  transform: rotate(22deg);
+}
+.story-page .story {
+  padding-block: 85px;
+}
+.story-values {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 55px;
+  padding-bottom: 95px;
+}
+.story-values article {
+  border-top: 1px solid var(--line);
+  padding-top: 30px;
+}
+.story-values svg {
+  width: 48px;
+  height: 53px;
+  color: #758367;
+  margin-bottom: 25px;
+}
+.story-values .eyebrow {
+  color: #626e57;
+  font-size: 8px;
+}
+.story-values h3 {
+  font-size: 30px;
+  margin-top: 14px;
+}
+.story-values p,
+.space-detail-grid p {
+  margin-top: 13px;
+  font-size: 12px;
+  line-height: 1.95;
+  color: #626e57;
+}
+.brand-story {
+  background: #ebece0;
+  padding-block: 78px;
+}
+.brand-story-inner {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  align-items: center;
+  gap: 90px;
+}
+.original-logo {
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+  justify-self: center;
+  border: 6px solid #dcdac7;
+}
+.original-logo img {
+  object-fit: cover;
+}
+.brand-story-inner > div:last-child {
+  max-width: 485px;
+}
+.brand-story .eyebrow {
+  color: #626e57;
+  margin-bottom: 18px;
+}
+.brand-story p:not(.eyebrow) {
+  margin-top: 24px;
+  font-size: 12px;
+  line-height: 2;
+  color: #626e57;
+}
+.brand-story .text-link {
+  margin-top: 25px;
+}
+.menu-page .menu-section {
+  padding-block: 65px;
+}
+.menu-page .section-heading h2 {
+  font-size: 47px;
+}
+.paper-menu {
+  text-align: center;
+}
+.paper-menu-heading > svg {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 19px;
+  color: #7b896b;
+}
+.paper-menu-heading .eyebrow {
+  margin-bottom: 19px;
+  color: #626e57;
+}
+.paper-menu-heading > p:last-child {
+  margin-top: 20px;
+  font-size: 11px;
+  color: #626e57;
+}
+.paper-menu-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 37px;
+  margin-top: 20px;
+  text-align: left;
+}
+.paper-menu-grid .full-menu-group {
+  margin-top: 35px;
+}
+.paper-menu-grid .full-menu-item {
+  gap: 15px;
+  padding-block: 19px 4px;
+}
+.paper-menu-grid .full-menu-item h4 {
+  font-size: 25px;
+}
+.paper-menu-grid .full-menu-item p {
+  font-size: 11px;
+}
+.paper-menu-grid .full-menu-item > span {
+  font-size: 11px;
+  flex-shrink: 0;
+}
+.menu-dietary-note {
+  border-top: 1px solid var(--line);
+  padding-top: 24px;
+  margin-top: 45px;
+  font-size: 10px;
+  color: #626e57;
+  line-height: 1.9;
+}
+.paper-menu > .button {
+  margin-top: 28px;
+}
+.space-page .space-section {
+  padding-block: 65px 80px;
+}
+.space-page-link {
+  text-align: center;
+  margin-top: 32px;
+}
+.space-details {
+  padding-block: 73px 83px;
+  background: #ebece0;
+}
+.space-details-heading {
+  margin-bottom: 42px;
+}
+.space-details-heading .eyebrow {
+  color: #626e57;
+  margin-bottom: 18px;
+}
+.space-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 45px;
+}
+.space-detail-grid article {
+  padding-top: 25px;
+  border-top: 1px solid #c7cdbb;
+}
+.space-detail-grid article > span {
+  font-size: 9px;
+  color: #626e57;
+}
+.space-detail-grid h3 {
+  font-size: 28px;
+  margin-top: 17px;
+}
+.visit-page-content {
+  display: grid;
+  grid-template-columns: 1fr 1.15fr;
+  gap: 95px;
+  padding-block: 72px 90px;
+  align-items: start;
+}
+.visit-information-arch {
+  border: 1px solid #b0b9a1;
+  border-radius: 220px 220px 0 0;
+  max-width: 360px;
+  text-align: center;
+  padding: 44px 24px 40px;
+  margin-inline: auto;
+}
+.visit-information-arch > svg {
+  width: 54px;
+  height: 65px;
+  margin: 0 auto 24px;
+}
+.visit-information-arch h2 {
+  font-size: 43px;
+}
+.visit-information-arch > p {
+  font-size: 11px;
+  line-height: 1.9;
+  color: #626e57;
+  margin-top: 26px;
+}
+.visit-information-arch .eyebrow {
+  color: #626e57;
+  display: block;
+  font-size: 7px;
+  letter-spacing: 1.3px;
+  margin-top: 26px;
+}
+.visit-faq {
+  max-width: 380px;
+  margin: 37px auto 0;
+}
+.visit-faq > h3 {
+  font-size: 29px;
+  margin-bottom: 14px;
+}
+.visit-faq details {
+  border-bottom: 1px solid var(--line);
+  padding-block: 16px;
+}
+.visit-faq summary {
+  cursor: pointer;
+  font-size: 11px;
+  min-height: 24px;
+  line-height: 1.8;
+}
+.visit-faq details p {
+  margin-top: 13px;
+  font-size: 11px;
+  line-height: 1.9;
+  color: #626e57;
+}
+.visit-faq details a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.visit-planner {
+  padding: 43px;
+  border: 1px solid #d3d7c7;
+  background: #eef0e6;
+  scroll-margin-top: 30px;
+}
+.visit-planner > .eyebrow {
+  font-size: 8px;
+  color: #626e57;
+  margin-bottom: 20px;
+}
+.visit-planner > h2 {
+  font-size: 48px;
+}
+.visit-planner .sample-note {
+  background: #e1e7d5;
+  color: #4f6044;
+}
+.visit-planner .button {
+  font-size: 11px;
+}
+.visit-planner .dialog-intro,
+.visit-planner .dialog-note,
+.visit-planner .form-privacy {
+  color: #56634b;
+}
+.footer-bottom > a {
+  padding-block: 6px;
+}
+.footer-bottom > a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 1000px) {
+  .story-values {
+    gap: 30px;
+  }
+  .story-values h3 {
+    font-size: 26px;
+  }
+  .original-logo {
+    width: 260px;
+    height: 260px;
+  }
+  .brand-story-inner {
+    gap: 50px;
+  }
+  .paper-menu-grid {
+    gap: 24px;
+  }
+  .paper-menu-grid .full-menu-item h4 {
+    font-size: 23px;
+  }
+  .visit-page-content {
+    gap: 45px;
+  }
+  .visit-planner {
+    padding: 33px;
+  }
+  .visit-planner > h2 {
+    font-size: 42px;
+  }
+}
+@media (max-width: 650px) {
+  .page-intro {
+    padding-block: 20px 50px;
+  }
+  .breadcrumb {
+    font-size: 8px;
+    margin-bottom: 36px;
+  }
+  .page-intro > .eyebrow {
+    font-size: 6.5px;
+    letter-spacing: 1.2px;
+    margin-bottom: 22px;
+  }
+  .page-intro h1 {
+    font-size: clamp(46px, 11.6vw, 68px);
+    letter-spacing: -1.8px;
+  }
+  .page-intro-description {
+    font-size: 11px;
+    max-width: 310px;
+    line-height: 1.95;
+    margin-top: 22px;
+  }
+  .intro-botanical {
+    display: none;
+  }
+  .story-page .story {
+    padding-block: 60px;
+  }
+  .story-values {
+    grid-template-columns: 1fr;
+    gap: 33px;
+    padding-bottom: 55px;
+  }
+  .story-values article {
+    padding-top: 25px;
+  }
+  .story-values svg {
+    margin-bottom: 19px;
+    height: 40px;
+    width: 37px;
+  }
+  .story-values h3 {
+    font-size: 31px;
+    margin-top: 10px;
+  }
+  .story-values p {
+    font-size: 12px;
+  }
+  .brand-story {
+    padding-block: 55px;
+  }
+  .brand-story-inner {
+    grid-template-columns: 1fr;
+    gap: 38px;
+  }
+  .original-logo {
+    width: 230px;
+    height: 230px;
+  }
+  .brand-story-inner > div:last-child {
+    max-width: none;
+  }
+  .brand-story p:not(.eyebrow) {
+    font-size: 12px;
+    line-height: 1.95;
+  }
+  .menu-page .menu-section {
+    padding-block: 50px;
+  }
+  .menu-page .section-heading h2 {
+    font-size: 42px;
+  }
+  .paper-menu-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .paper-menu-grid .full-menu-group > h3 {
+    font-size: 33px;
+  }
+  .paper-menu-grid .full-menu-item h4 {
+    font-size: 26px;
+  }
+  .paper-menu-grid .full-menu-item p {
+    font-size: 12px;
+  }
+  .menu-dietary-note {
+    font-size: 10px;
+  }
+  .space-page .space-section {
+    padding-block: 50px 55px;
+  }
+  .space-details {
+    padding-block: 55px;
+  }
+  .space-detail-grid {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+  .space-detail-grid h3 {
+    font-size: 29px;
+  }
+  .visit-page-content {
+    grid-template-columns: 1fr;
+    padding-block: 48px 60px;
+    gap: 42px;
+  }
+  .visit-planner {
+    grid-row: 1;
+    padding: 29px 23px;
+  }
+  .visit-planner > h2 {
+    font-size: 42px;
+  }
+  .visit-planner > .eyebrow {
+    font-size: 7px;
+    letter-spacing: 1.3px;
+  }
+  .visit-planner .form-row {
+    gap: 13px;
+  }
+  .visit-planner .visit-form input,
+  .visit-planner .visit-form select {
+    font-size: 16px;
+  }
+  .visit-faq summary {
+    font-size: 12px;
+  }
+  .visit-faq details p {
+    font-size: 12px;
+  }
+  .hero-botanical {
+    right: -10px;
+  }
+  .hero-description,
+  .story-copy > p:not(.eyebrow),
+  .menu-card > p,
+  .space-heading > p:last-child {
+    font-size: 12px;
+  }
+  .menu-filters button {
+    font-size: 9px;
+  }
+}
+@media (max-width: 360px) {
+  .page-intro h1 {
+    font-size: 40px;
+  }
+  .visit-planner .form-row {
+    grid-template-columns: 1fr;
+  }
+}
+@media (min-width: 651px) and (max-width: 1100px) {
+  .story-botanical {
+    right: -18px;
+  }
+}
