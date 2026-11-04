@@ -1974,3 +1974,14 @@ h2 em {
     break-inside: avoid;
   }
 }
+
+/* Quiet, shared ink landscapes behind the editorial sections. */
+.story,.space-section,.visit-section,.page-intro{position:relative;isolation:isolate}
+.heritage-sketch{position:absolute;z-index:-1;pointer-events:none;width:min(65%,760px);right:0;bottom:0;color:currentColor;opacity:.075;overflow:hidden}
+.heritage-sketch svg{display:block;width:100%;height:auto;animation:heritage-drift 18s ease-in-out infinite alternate;transform-origin:70% 80%}
+.heritage-sketch-arches{right:auto;left:0;width:min(52%,620px);opacity:.06}
+.page-intro .heritage-sketch{width:48%;bottom:5%;right:0;left:auto}
+.visit-section>.heritage-sketch{width:65%;opacity:.1;color:var(--cream)}
+@keyframes heritage-drift{from{transform:translateY(0) rotate(-.4deg)}to{transform:translateY(-10px) rotate(.4deg)}}
+@media(max-width:650px){.heritage-sketch{width:90%;opacity:.055}.page-intro .heritage-sketch{width:85%;bottom:0}.heritage-sketch-arches{width:85%}}
+@media(prefers-reduced-motion:reduce){.heritage-sketch svg{animation:none}}

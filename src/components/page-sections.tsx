@@ -1,3 +1,4 @@
+import HeritageSketch from "@/components/heritage-sketch";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -49,6 +50,7 @@ export function PageIntro({ page }: { page: Exclude<CafePage, "home"> }) {
   const intro = intros[page];
   return (
     <section className="page-intro shell" aria-labelledby="page-title">
+      <HeritageSketch kind={page === "menu" || page === "story" ? "hills" : "arches"} />
       <nav aria-label="Breadcrumb" className="breadcrumb">
         <Link href="/">Home</Link>
         <span aria-hidden="true">/</span>

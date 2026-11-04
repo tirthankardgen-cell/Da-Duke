@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import HeritageSketch from "@/components/heritage-sketch";
 import JourneyHero from "@/components/journey-hero";
 import VisitPlanner from "@/components/visit-planner";
 import {
@@ -82,7 +83,7 @@ export default function Cafe({ page = "home" }: { page?: CafePage }) {
       </a>
       <header
         id="home"
-        className="site-header"
+        className={`site-header ${isHome ? "site-header-overlay" : ""}`}
         onKeyDown={(event) => {
           if (event.key === "Escape" && navOpen) {
             setNavOpen(false);
@@ -174,6 +175,7 @@ export default function Cafe({ page = "home" }: { page?: CafePage }) {
             className="story shell section-spacing"
             aria-labelledby="story-title"
           >
+            <HeritageSketch kind="hills" />
             <div className="story-art">
               <ArchDrawing />
               <span>Two worlds. One table.</span>
@@ -319,6 +321,7 @@ export default function Cafe({ page = "home" }: { page?: CafePage }) {
             className="space-section shell section-spacing"
             aria-labelledby="space-title"
           >
+            <HeritageSketch kind="arches" />
             <div className="space-heading">
               <p className="eyebrow">YOUR EVERYDAY LITTLE ESCAPE</p>
               <h2 id="space-title">
@@ -381,6 +384,7 @@ export default function Cafe({ page = "home" }: { page?: CafePage }) {
             className="visit-section"
             aria-labelledby="visit-title"
           >
+            <HeritageSketch kind="hills" />
             <div className="shell visit-inner">
               <Botanical className="visit-botanical" />
               <div className="visit-copy">

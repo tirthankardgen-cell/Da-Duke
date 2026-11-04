@@ -28,3 +28,12 @@
 .journey-section[data-still=true]{height:100svh}.journey-section[data-still=true] .journey-sticky{position:relative}
 @media(max-width:650px){.journey-section{height:360svh}.journey-drawing{width:180%;max-width:none;left:-40%}.journey-opening{font-size:52px}.journey-home-copy h1{font-size:68px}.journey-footer{bottom:18px;font-size:9px}.journey-scroll{display:none}.journey-hill-copy{padding-top:20svh}.journey-kicker{font-size:8px;letter-spacing:2px}.journey-home-copy{background:radial-gradient(ellipse,#f4f1e8 10%,#f4f1e8dd 35%,transparent 75%)}}
 @media(prefers-reduced-motion:reduce){.journey-section{height:100svh;--home:1!important;--rome:0!important;--hills:0!important;--cloud:0!important}.journey-sticky{position:relative}.journey-drawing{will-change:auto}.journey-scroll{display:none}}
+
+/* The header overlays the first scene; the page resumes after the pinned reveal. */
+.site-header.site-header-overlay{position:absolute;inset:0 0 auto;background:transparent;z-index:20}
+.site-header-overlay .header-inner{border-bottom-color:transparent}
+.site-header-overlay .mobile-nav{background:var(--cream)}
+.journey-section{height:480svh}
+@media(max-width:650px){.journey-section{height:400svh}}
+.journey-section[data-still=true]{height:100svh}
+@media(prefers-reduced-motion:reduce){.journey-section{height:100svh}}
