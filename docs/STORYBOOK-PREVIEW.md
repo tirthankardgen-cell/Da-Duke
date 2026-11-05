@@ -11,12 +11,13 @@ The homepage is an illustrated book inspired by the user-supplied [Biryani Legen
 ## What is included
 
 - A closed forest-green cover waits for the visitor to select **Open the book**, use the forward arrow, or choose a chapter. Its inside carries the left page while turning, so no flat left page or binding appears prematurely. The contents/title spread and five chapters follow: The Alps, The Himalayas, At the table, The House, and Stay a little. Draft preview opens directly for editing.
-- Two facing pages on desktop, phones and tablets, including landscape orientation. The compact book keeps short introductions, photographs and menu highlights, with **Read chapter** immediately below it or beside it in short landscape windows.
-- A full chapter reader with comfortable prose, all CMS paragraphs, captions, disclosures and links. The native dialog supports internal scrolling, keyboard reading, Escape, backdrop dismissal, and **Back to book** with focus returned to the reading button.
-- A single viewport for the cover, book, navigation and footer. Compact pages do not scroll. Longer reading happens inside the reader; unusually long desktop CMS copy retains keyboard-accessible page overflow.
+- A larger mobile/tablet cover and open book, with both facing pages visible, including in landscape orientation. The desktop book keeps its existing dimensions. Compact pages contain short introductions, photographs and menu highlights; the separate reading row and reader dialog have been removed.
+- One compact, horizontally scrollable row of chapter links on phones. The selected chapter stays in view when turning pages or resizing the screen. **View menu** remains available in the header.
+- Faint Eiffel Tower, Colosseum, mountain and tea illustrations in the margins. Leaves, branches, clouds and small stars move slowly. This decorative layer is hidden from assistive technology, does not intercept input and does not affect book layout.
+- A single viewport for the cover, book, navigation and footer. Compact pages do not scroll; unusually long desktop CMS copy retains keyboard-accessible page overflow.
 - CSS 3D opening and page turns on every screen size, contents links, chapter buttons, previous/next controls, keyboard navigation, mouse-wheel navigation and horizontal touch swipes.
 - Shareable chapter URLs such as `/#himalayas`, with browser back/forward support. Older `/#himalayas/right` links now open the complete spread.
-- System reduced-motion support and a separate **Still pages** control. Both preserve the visitor's choice of when to open the cover.
+- System reduced-motion support and a **Pause motion / Enable motion** control for both ambient motion and page animations. Both preserve the visitor's choice of when to open the cover.
 - **View menu** in the mobile/tablet header, available before opening the book, plus links to the complete menu, gatherings, journal, house, visit and private-enquiry experiences.
 - Editable cover, dedication, Alps/Himalayas text and images in **Pages & stories**, plus chapter order and visibility. Remaining chapters use existing shared copy and featured, available menu items.
 - Migration of older browser-local drafts and publications without discarding their existing page edits.
@@ -24,7 +25,7 @@ The homepage is an illustrated book inspired by the user-supplied [Biryani Legen
 
 ![Both pages together on a phone](preview/storybook-mobile.webp)
 
-![The complete chapter at a comfortable reading size](preview/storybook-reader.webp)
+![The larger cover on a phone](preview/storybook-mobile-cover.webp)
 
 ![The two-page tablet layout](preview/storybook-tablet.webp)
 
@@ -33,14 +34,14 @@ The homepage is an illustrated book inspired by the user-supplied [Biryani Legen
 Verified on **5 November 2026**, using **Node 22.23.4**, Next.js 16.4.5 and Google Chrome through Playwright CLI, against the final production build.
 
 - `npm run lint`, all **9 existing domain tests**, `npm run build`, `npm run typecheck`, and `git diff --check` pass.
-- **44 interaction checks** cover manual opening, the moving inside cover, phone page-turn animation, native Chrome touch swipes, keyboard/wheel turns, first/last boundaries, browser history, legacy chapter links, resizing, reduced motion, the full reader, and the mobile menu link.
-- **78 spread-layout checks**, **13 cover-layout checks**, and **6 full-reader checks** pass. Every chapter shows both facing pages without document scrolling, clipped default copy or broken images. Covered viewports: **320 × 568**, **320 × 740**, **390 × 600**, **390 × 844**, **600 × 1024**, **768 × 1024**, **1024 × 768**, **1100 × 768**, **1101 × 768**, **568 × 320**, **844 × 390**, **1440 × 900**, and **1280 × 633**. The two adjacent widths check the compact/desktop breakpoint.
-- The cover remains closed until activated. Frame samples at phone, tablet and desktop widths confirm **closed → opening → open**, with the stationary left page hidden throughout the turn and the contents printed on the moving inside cover.
-- Reader checks confirm complete chapter content, prose of at least **17px**, internal keyboard/wheel scrolling, isolation from background page turns, Escape/backdrop dismissal, restored focus, contents navigation and scroll reset on reopening.
-- **12 CMS checks** confirm that a fifteen-paragraph draft remains fully reachable in phone and tablet readers, does not change the published copy, preserves desktop keyboard overflow, and retains the draft URL when turning chapters. Temporary fixtures were restored after the checks.
-- Axe reports **no WCAG A/AA violations through WCAG 2.2** in ten checked states: the phone cover, three compact book spreads, five full-reader chapters, and desktop contents.
-- Photographs and headings record **zero idle size or position changes** across phone, tablet and the shorter desktop viewport. A stable desktop scrollbar gutter keeps overflow measurements independent of the page width.
-- No JavaScript page errors or broken book images were found. Existing supporting-route and broader CMS verification is recorded in [the previous verification notes](VERIFICATION.md).
+- **42 interaction checks** cover manual opening, the moving inside cover, phone page-turn animation, native Chrome touch swipes, keyboard/wheel turns, first/last boundaries, browser history, legacy chapter links, compact navigation, resizing, reduced motion, ambient motion controls, reader removal and the mobile menu link.
+- **84 spread-layout checks** and **14 cover-layout checks** pass. Every chapter shows both facing pages without document scrolling, clipped default compact content or broken images. Covered viewports: **320 × 568**, **320 × 740**, **390 × 600**, **390 × 844**, **412 × 780**, **600 × 1024**, **768 × 1024**, **1024 × 768**, **1100 × 768**, **1101 × 768**, **568 × 320**, **844 × 390**, **1440 × 900**, and **1280 × 633**. The adjacent widths check the compact/desktop breakpoint. All 14 layouts use a single row of chapter links.
+- At **390 × 844**, the closed cover grows from approximately **175 × 259** to **322 × 546** CSS pixels; the open spread grows from **350 × 259** to **362 × 307**. At **1440 × 900**, the desktop book remains exactly **1024.5 × 683**, at the same position.
+- The cover remains closed until activated. Frame samples at phone, tablet and desktop widths confirm **closed → opening → open**, with the stationary left page hidden throughout the turn and the contents printed on the moving inside cover. The mobile cover shrinks early enough to make room for the facing page during opening.
+- The ambient layer animates normally, stops under **Pause motion** or system reduced motion, and resumes under **Enable motion**. It remains inert and hidden from assistive technology. No reader button, action row or dialog remains.
+- Axe reports **no WCAG A/AA violations through WCAG 2.2** in eight checked states: the phone cover, all six phone spreads and desktop contents.
+- Photographs and headings record **zero idle size or position changes** while the backdrop animates across phone, tablet and the shorter desktop viewport. A stable desktop scrollbar gutter keeps overflow measurements independent of the page width.
+- No JavaScript page errors or broken book images were found. The existing CMS implementation and content data were not changed. Supporting-route and broader CMS verification is recorded in [the previous verification notes](VERIFICATION.md).
 
 Full screenshots, downloaded reference material and browser QA scripts are kept in ignored `output/`. Selected compressed screenshots from the production build are committed under `docs/preview/`.
 

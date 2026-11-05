@@ -24,6 +24,7 @@ import {
   TeacupSeal,
 } from "./book-illustrations";
 import styles from "./storybook.module.css";
+import BookBackdrop from "./book-backdrop";
 
 type ChapterId = "contents" | BookChapterId;
 type Side = "left" | "right";
@@ -110,14 +111,12 @@ export default function Storybook({ preview = false }: { preview?: boolean }) {
   const activeIndex = chapterIds.indexOf(active);
   const [turn, setTurn] = useState<PageTurn | null>(null);
   const [still, setStill] = useState(false);
-  const [readerOpen, setReaderOpen] = useState(false);
   const [opening, setOpening] = useState<"closed" | "opening" | "open">(
     preview ? "open" : "closed",
   );
   const main = useRef<HTMLElement>(null);
   const book = useRef<HTMLDivElement>(null);
-  const reader = useRef<HTMLDialogElement>(null);
-  const readerBody = useRef<HTMLDivElement>(null);
+  const chapterNav = useRef<HTMLElement>(null);
   const turnLocked = useRef(false);
   const restoreFocus = useRef(false);
   const touch = useRef<{ x: number; y: number } | null>(null);
@@ -159,20 +158,28 @@ export default function Storybook({ preview = false }: { preview?: boolean }) {
   }, [opening, finishOpening]);
 
   useEffect(() => {
-    const dialog = reader.current;
-    if (!dialog) return;
-    if (readerOpen) {
-      if (!dialog.open) dialog.showModal();
-      readerBody.current?.scrollTo({ top: 0, behavior: "instant" });
-    } else if (!readerOpen && dialog.open) {
-      dialog.close();
-    }
-  }, [readerOpen, active]);
+    const nav = chapterNav.current;
+    if (!nav) return;
+    const revealChapter = () => {
+      const current = nav.querySelector<HTMLButtonElement>("[aria-current]");
+      if (!current || nav.scrollWidth <= nav.clientWidth) return;
+      nav.scrollTo({
+        left: current.offsetLeft - (nav.clientWidth - current.offsetWidth) / 2,
+        behavior:
+          still || window.matchMedia("(prefers-reduced-motion: reduce)").matches
+            ? "instant"
+            : "smooth",
+      });
+    };
+    revealChapter();
+    const observer = new ResizeObserver(revealChapter);
+    observer.observe(nav);
+    return () => observer.disconnect();
+  }, [active, still]);
 
   const goTo = useCallback(
     (next: ChapterId) => {
       if (turnLocked.current || !chapterIds.includes(next)) return;
-      setReaderOpen(false);
       if (opening !== "open") finishOpening();
       if (next === active) return;
       const reduceMotion =
@@ -618,10 +625,6 @@ export default function Storybook({ preview = false }: { preview?: boolean }) {
   const firstPage = activeIndex * 2 + 2;
   const hasPrevious = opening === "open" && activeIndex > 0;
   const hasNext = opening !== "open" || activeIndex < chapterIds.length - 1;
-  const chapterLabel =
-    active === "contents"
-      ? "A tale of two worlds"
-      : bookChapterLabels[active].label;
 
   return (
     <div
@@ -629,6 +632,7 @@ export default function Storybook({ preview = false }: { preview?: boolean }) {
       data-still={still}
       data-opening={opening}
     >
+      <BookBackdrop />
       <a
         className="skip-link"
         href="#storybook-main"
@@ -667,7 +671,11 @@ export default function Storybook({ preview = false }: { preview?: boolean }) {
           <span>Da Duke</span>
           <em>and Chai</em>
         </Link>
-        <nav className={styles.chapterNav} aria-label="Book chapters">
+        <nav
+          ref={chapterNav}
+          className={styles.chapterNav}
+          aria-label="Book chapters"
+        >
           {chapterIds.map((id) => (
             <button
               key={id}
@@ -820,27 +828,6 @@ export default function Storybook({ preview = false }: { preview?: boolean }) {
               )}
             </div>
           </div>
-          <div
-            className={styles.readerActions}
-            aria-hidden={opening !== "open" ? true : undefined}
-          >
-            <div>
-              <span>
-                CHAPTER {String(activeIndex + 1).padStart(2, "0")} /{" "}
-                {String(chapterIds.length).padStart(2, "0")}
-              </span>
-              <p>{chapterLabel}</p>
-            </div>
-            <button
-              type="button"
-              onClick={() => setReaderOpen(true)}
-              disabled={opening !== "open" || !!turn}
-              aria-haspopup="dialog"
-              aria-controls="storybook-reader"
-            >
-              Read chapter <Arrow />
-            </button>
-          </div>
         </div>
         <div className={styles.bookControls}>
           <p className={styles.readingHint}>
@@ -927,53 +914,11 @@ export default function Storybook({ preview = false }: { preview?: boolean }) {
             onClick={() => setStill(!still)}
             aria-pressed={still}
           >
-            {still ? "Enable page motion" : "Still pages"}
+            {still ? "Enable motion" : "Pause motion"}
           </button>
           <Link href="/privacy">Privacy</Link>
         </div>
       </footer>
-      <dialog
-        id="storybook-reader"
-        ref={reader}
-        className={styles.readerDialog}
-        aria-labelledby="storybook-reader-title"
-        onCancel={() => setReaderOpen(false)}
-        onClose={() => setReaderOpen(false)}
-        onClick={(event) => {
-          if (event.target === event.currentTarget) setReaderOpen(false);
-        }}
-      >
-        <div className={styles.readerHeader}>
-          <h2 id="storybook-reader-title">{chapterLabel}</h2>
-          <button type="button" onClick={() => setReaderOpen(false)}>
-            Back to book <span aria-hidden="true">×</span>
-          </button>
-        </div>
-        <div
-          className={styles.readerBody}
-          ref={readerBody}
-          role="region"
-          aria-label="Full chapter"
-          tabIndex={0}
-        >
-          {readerOpen && (
-            <div className={styles.readerPages}>
-              <section
-                className={styles.readerPaper}
-                aria-label={`${chapterLabel}, story`}
-              >
-                {pageContent(active, "left")}
-              </section>
-              <section
-                className={styles.readerPaper}
-                aria-label={`${chapterLabel}, photographs and notes`}
-              >
-                {pageContent(active, "right")}
-              </section>
-            </div>
-          )}
-        </div>
-      </dialog>
     </div>
   );
 }

@@ -10,6 +10,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  isolation: isolate;
   color: var(--book-ink);
   background: radial-gradient(
     ellipse at 48% 38%,
@@ -19,6 +20,175 @@
   );
   font-family: "Crimson Pro", Georgia, serif;
   line-height: 1.5;
+}
+
+/* Quiet, original linework behind the book; it never participates in layout. */
+.backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  color: #6b7352;
+}
+.backdrop > svg {
+  position: absolute;
+  stroke: currentColor;
+  stroke-width: 1;
+}
+.backdropParis {
+  top: 16%;
+  left: -40px;
+  width: clamp(230px, 24vw, 420px);
+  opacity: 0.3;
+}
+.backdropRome {
+  right: -44px;
+  bottom: 12%;
+  width: clamp(250px, 25vw, 440px);
+  opacity: 0.28;
+}
+.backdropHills {
+  top: 8%;
+  right: -56px;
+  width: clamp(240px, 26vw, 440px);
+  opacity: 0.18;
+}
+.backdropBranchLeft {
+  bottom: -4%;
+  left: -84px;
+  width: clamp(190px, 20vw, 310px);
+  height: auto;
+  rotate: -20deg;
+  opacity: 0.18;
+  transform-origin: 15% 100%;
+  animation: branchSway 22s ease-in-out infinite alternate;
+}
+.backdropBranchRight {
+  top: 3%;
+  right: -92px;
+  width: clamp(190px, 18vw, 290px);
+  height: auto;
+  rotate: 175deg;
+  opacity: 0.16;
+  transform-origin: 95% 0;
+  animation: branchSway 26s -11s ease-in-out infinite alternate;
+}
+.backdropTrail {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  stroke-dasharray: 1 11;
+  stroke-linecap: round;
+  opacity: 0.18;
+}
+.backdropLeaf {
+  width: 27px;
+  height: 45px;
+  color: #897447;
+  opacity: 0.3;
+  animation: leafDrift 18s ease-in-out infinite;
+}
+.backdropLeaf[data-leaf="0"] {
+  left: 10%;
+  top: 29%;
+  rotate: -28deg;
+}
+.backdropLeaf[data-leaf="1"] {
+  right: 8%;
+  top: 51%;
+  rotate: 38deg;
+  animation-delay: -7s;
+}
+.backdropLeaf[data-leaf="2"] {
+  left: 19%;
+  bottom: 18%;
+  width: 20px;
+  rotate: 68deg;
+  animation-delay: -13s;
+}
+.backdropSpark {
+  width: 13px;
+  height: 13px;
+  color: #95794b;
+  animation: inkGlimmer 16s ease-in-out infinite alternate;
+}
+.backdropSpark[data-spark="0"] {
+  left: 6%;
+  top: 48%;
+}
+.backdropSpark[data-spark="1"] {
+  right: 17%;
+  top: 16%;
+  animation-delay: -5s;
+}
+.backdropSpark[data-spark="2"] {
+  right: 7%;
+  bottom: 22%;
+  animation-delay: -11s;
+}
+.backdrop :global(.ink-cloud) {
+  animation: cloudDrift 28s ease-in-out infinite alternate;
+}
+@keyframes branchSway {
+  from {
+    transform: rotate(-2deg);
+  }
+  to {
+    transform: rotate(2deg);
+  }
+}
+@keyframes leafDrift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(-5deg);
+  }
+  50% {
+    transform: translate3d(5px, -12px, 0) rotate(5deg);
+  }
+}
+@keyframes inkGlimmer {
+  from {
+    opacity: 0.15;
+  }
+  to {
+    opacity: 0.4;
+  }
+}
+@keyframes cloudDrift {
+  from {
+    transform: translateX(-5px);
+  }
+  to {
+    transform: translateX(9px);
+  }
+}
+.experience[data-still="true"] .backdrop * {
+  animation: none !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .backdrop * {
+    animation: none !important;
+  }
+}
+@media (max-width: 600px) {
+  .backdropParis {
+    top: 14%;
+    left: -38px;
+    width: 240px;
+    opacity: 0.3;
+  }
+  .backdropRome {
+    bottom: 13%;
+    right: -30px;
+    width: 250px;
+    opacity: 0.26;
+  }
+  .backdropHills {
+    top: 19%;
+    right: -42px;
+    width: 210px;
+  }
 }
 
 .experience button,
@@ -1249,332 +1419,8 @@
   }
 }
 
-.mobileHeaderCta,
-.readerActions {
+.mobileHeaderCta {
   display: none;
-}
-
-/* The full story is an optional reading layer; the book keeps its proportions. */
-.readerDialog {
-  width: min(920px, calc(100% - 32px));
-  height: min(860px, calc(100dvh - 32px));
-  max-width: none;
-  max-height: none;
-  margin: auto;
-  padding: 0;
-  border: 1px solid #a99b7a;
-  border-radius: 8px;
-  color: var(--book-ink);
-  background: #f3ead5;
-  box-shadow: 0 24px 90px #17271d66;
-  overflow: hidden;
-}
-.readerDialog[open] {
-  display: flex;
-  flex-direction: column;
-}
-.readerDialog::backdrop {
-  background: #18291f99;
-  backdrop-filter: blur(5px);
-}
-.readerHeader {
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 12px 24px;
-  border-bottom: 1px solid #b8ab8a80;
-  background: #f3ead5;
-}
-.readerHeader h2 {
-  font:
-    500 25px/1.1 "Cormorant Garamond",
-    Georgia,
-    serif;
-}
-.readerHeader button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  min-height: 44px;
-  padding: 8px 14px;
-  border: 1px solid #8d8b70;
-  border-radius: 24px;
-  background: transparent;
-  color: var(--book-green);
-  font-size: 14px;
-  white-space: nowrap;
-}
-.readerHeader button span {
-  font-size: 22px;
-  line-height: 1;
-}
-.readerBody {
-  min-height: 0;
-  overflow: auto;
-  overscroll-behavior: contain;
-  touch-action: pan-y pinch-zoom;
-  scrollbar-gutter: stable;
-  scrollbar-width: thin;
-  scrollbar-color: #b6a77c transparent;
-}
-.readerBody:focus-visible {
-  outline: 2px solid var(--book-accent);
-  outline-offset: -5px;
-}
-.readerPages {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-.readerPaper {
-  min-width: 0;
-  padding: 32px;
-  container-type: inline-size;
-  overflow: hidden;
-}
-.readerPaper + .readerPaper {
-  border-left: 1px solid #b8ab8a60;
-}
-.readerPaper > div {
-  min-height: 0;
-  padding-top: 0;
-}
-.readerPaper h2 {
-  font:
-    400 40px/1.08 "Cormorant Garamond",
-    Georgia,
-    serif;
-  letter-spacing: -0.025em;
-  overflow-wrap: anywhere;
-}
-.readerPaper .kicker,
-.readerPaper .plateLabel {
-  font-size: 10px;
-  letter-spacing: 0.15em;
-  margin-bottom: 12px;
-}
-.readerPaper .storySketch {
-  height: 120px;
-  margin: 0 0 24px;
-}
-.readerPaper .storyIntro {
-  max-width: none;
-  font-size: 20px;
-  line-height: 1.5;
-  margin: 20px 0;
-}
-.readerPaper .prose {
-  max-width: none;
-  font-size: 17px;
-  line-height: 1.7;
-}
-.readerPaper .prose p + p {
-  margin-top: 18px;
-}
-.readerPaper .story .prose > p:first-child::first-letter {
-  font-size: 54px;
-  padding: 9px 7px 0 0;
-}
-.readerPaper .chapterLink {
-  font-size: 16px;
-  min-height: 44px;
-  gap: 10px;
-  margin-top: 20px;
-  padding: 8px 0;
-}
-.readerPaper .chapterLink svg,
-.readerPaper .invitationButton svg {
-  width: 18px;
-  height: 18px;
-  flex-shrink: 0;
-}
-.readerPaper .photo figcaption {
-  font-size: 15px;
-  margin-top: 14px;
-}
-.readerPaper .pullQuote {
-  max-width: none;
-  font-size: 30px;
-  line-height: 1.25;
-  margin-top: 28px;
-}
-.readerPaper .smallFlourish {
-  width: 150px;
-  height: 18px;
-  margin: 24px auto;
-}
-.readerPaper .disclosure {
-  max-width: none;
-  font-size: 13px;
-  line-height: 1.6;
-  margin-top: 18px;
-}
-.readerPaper .photoBranch,
-.readerPaper .tableBranch,
-.readerPaper .invitationBranch,
-.readerPaper .contentsBranch {
-  display: none;
-}
-.readerPaper .contentsList {
-  margin-top: 24px;
-}
-.readerPaper .contentsList button {
-  min-height: 64px;
-  gap: 12px;
-  padding: 12px 0;
-}
-.readerPaper .contentsLabel > span {
-  font-size: 25px;
-}
-.readerPaper .contentsLabel small {
-  font-size: 15px;
-  margin-top: 4px;
-}
-.readerPaper .contentsLabel {
-  flex-shrink: 1;
-}
-.readerPaper .roman,
-.readerPaper .contentsNumber {
-  min-width: 16px;
-  font-size: 14px;
-}
-.readerPaper .leader {
-  margin-top: 18px;
-}
-.readerPaper .dedication {
-  max-width: none;
-  margin-top: 32px;
-  font-size: 24px;
-}
-.readerPaper .contentsFootnote {
-  font-size: 10px;
-  margin-top: 20px;
-  padding-top: 16px;
-}
-.readerPaper .contentsFootnote span:last-child {
-  font-size: 18px;
-}
-.readerPaper .cover {
-  padding: 28px 0;
-}
-.readerPaper .coverTitle {
-  font-size: 68px;
-  color: var(--book-green);
-  line-height: 0.92;
-}
-.readerPaper .coverTitle em {
-  font-size: 46px;
-  margin-top: 12px;
-}
-.readerPaper .mountainEmblem {
-  width: 220px;
-  max-width: 100%;
-  height: 120px;
-  margin-bottom: 16px;
-}
-.readerPaper .coverSubtitle {
-  max-width: 260px;
-  font-size: 26px;
-  margin: 24px 0;
-}
-.readerPaper .flourish {
-  width: 230px;
-  max-width: 100%;
-  height: 20px;
-  margin: 0 0 20px;
-}
-.readerPaper .edition {
-  font-size: 10px;
-}
-.readerPaper .coverDescription {
-  max-width: 300px;
-  margin-top: 24px;
-  font-size: 17px;
-  line-height: 1.65;
-}
-.readerPaper .volume {
-  position: static !important;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 36px;
-  font-size: 9px;
-}
-.readerPaper .volume > span {
-  font-size: 16px;
-}
-.readerPaper .coverFrame {
-  inset: 70px 0 14px;
-}
-.readerPaper .coverBranchLeft,
-.readerPaper .coverBranchRight {
-  width: 130px;
-  height: 210px;
-  bottom: 60px;
-}
-.readerPaper .menuSelections {
-  margin-top: 24px;
-}
-.readerPaper .menuSelection {
-  gap: 14px;
-  padding: 18px 0;
-}
-.readerPaper .menuSelection h3 {
-  font-size: 24px;
-}
-.readerPaper .menuSelection p {
-  font-size: 17px;
-  line-height: 1.6;
-  margin-top: 8px;
-}
-.readerPaper .menuSelection small {
-  display: block;
-  font-size: 13px;
-  margin-top: 8px;
-}
-.readerPaper .teaPhoto {
-  margin: 20px 0 0 8px;
-}
-.readerPaper .pastryPhoto {
-  margin-top: -24px;
-  margin-right: 8px;
-}
-.readerPaper .handwritten {
-  font-size: 42px;
-  margin-top: 28px;
-}
-.readerPaper .houseStory .photo {
-  margin: 24px 0;
-}
-.readerPaper .smallSeal,
-.readerPaper .invitationSeal {
-  width: 100px;
-  height: 100px;
-  margin: 0 auto 24px;
-}
-.readerPaper .houseFacing h2 {
-  margin: 0 0 20px;
-}
-.readerPaper .journalNote {
-  font-size: 18px;
-  line-height: 1.6;
-  margin-top: 8px;
-}
-.readerPaper .signoff,
-.readerPaper .theEnd {
-  font-size: 32px;
-  margin-top: 24px;
-}
-.readerPaper .invitationButton {
-  font-size: 16px;
-  min-height: 44px;
-  padding: 12px 20px;
-  gap: 12px;
-}
-.readerPaper .invitation {
-  padding-block: 12px;
 }
 
 @media (min-width: 1101px) and (max-width: 1250px) {
@@ -1626,11 +1472,11 @@
 /* Phones and tablets turn complete spreads, just like the desktop book. */
 @media (max-width: 1100px) {
   .header {
-    height: 104px;
-    padding: 8px 24px 0;
+    height: 92px;
+    padding: 8px 20px 0;
     gap: 0 12px;
     grid-template-columns: 1fr auto;
-    grid-template-rows: 48px 48px;
+    grid-template-rows: 48px 36px;
   }
   .wordmark {
     gap: 6px;
@@ -1659,15 +1505,24 @@
     height: 14px;
   }
   .chapterNav {
+    position: relative;
     grid-column: 1 / -1;
     grid-row: 2;
     justify-content: space-between;
-    gap: 0;
+    gap: 12px;
     min-width: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    touch-action: pan-x pinch-zoom;
+  }
+  .chapterNav::-webkit-scrollbar {
+    display: none;
   }
   .chapterNav button {
-    min-height: 44px;
-    padding: 10px 5px;
+    flex: 0 0 auto;
+    min-height: 36px;
+    padding: 8px 5px;
     font-size: 11px;
     letter-spacing: 0.8px;
   }
@@ -1676,21 +1531,44 @@
     right: 5px;
   }
   .bookViewport {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 28px;
+    display: grid;
+    place-items: center;
   }
   .bookSurround {
-    flex-shrink: 0;
-    width: min(820px, calc(100cqw - 48px), calc((100cqh - 116px) * 1.4));
-    aspect-ratio: 1.4;
+    --spread-ratio: 1.3;
+    --spread-width: min(
+      calc(100cqw - 32px),
+      calc((100cqh - 32px) * var(--spread-ratio))
+    );
+    --spread-height: calc(var(--spread-width) / var(--spread-ratio));
+    --cover-scale: max(
+      1,
+      min(
+        calc((100cqh - 24px) / (var(--spread-height) + 22px)),
+        calc((100cqw - 32px) / (var(--spread-width) / 2 + 20px))
+      )
+    );
+    width: var(--spread-width);
+    aspect-ratio: var(--spread-ratio);
+    transform-origin: center;
+  }
+  .experience[data-opening="closed"] .bookSurround {
+    transform: scale(var(--cover-scale));
+  }
+  .experience[data-opening="opening"] .bookSurround {
+    /* Make room for the facing page before the cover completes its turn. */
+    transition: transform 0.65s cubic-bezier(0.3, 0.05, 0.2, 1);
+  }
+  .experience:not([data-opening="open"]) .book {
+    perspective: 4000px;
+  }
+  .chapterNav button:focus-visible {
+    outline-offset: -3px;
   }
   .book {
     --compact-title: clamp(20px, 6.2cqw, 36px);
     --compact-intro: clamp(12px, 3.3cqw, 17px);
-    aspect-ratio: 1.4;
+    aspect-ratio: var(--spread-ratio);
     perspective: 1600px;
   }
   .book .sheet {
@@ -1931,52 +1809,6 @@
     padding-top: 0;
     font-size: 4cqw;
   }
-  .readerActions {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    width: min(820px, calc(100cqw - 48px), calc((100cqh - 116px) * 1.4));
-    min-height: 56px;
-    flex-shrink: 0;
-  }
-  .experience:not([data-opening="open"]) .readerActions {
-    visibility: hidden;
-    pointer-events: none;
-  }
-  .readerActions > div > span {
-    font-size: 10px;
-    letter-spacing: 1.5px;
-    color: var(--book-muted);
-  }
-  .readerActions p {
-    font:
-      500 23px/1.2 "Cormorant Garamond",
-      Georgia,
-      serif;
-    margin-top: 4px;
-  }
-  .readerActions > button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    min-height: 44px;
-    flex-shrink: 0;
-    padding: 10px 16px;
-    border: 1px solid var(--book-green);
-    border-radius: 28px;
-    background: var(--book-green);
-    color: #fbf1d6;
-    font-size: 15px;
-  }
-  .readerActions > button svg {
-    width: 16px;
-    height: 16px;
-  }
-  .readerActions > button:disabled {
-    opacity: 0.6;
-  }
   .bookControls {
     padding: 6px 24px;
     gap: 16px;
@@ -2052,44 +1884,18 @@
   }
 }
 
-@media (max-width: 700px) {
-  .readerPages {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .readerPaper {
-    padding: 28px 24px;
-  }
-  .readerPaper + .readerPaper {
-    border-left: 0;
-    border-top: 1px solid #b8ab8a60;
-  }
-  .readerHeader {
-    padding: 10px 16px;
-    gap: 12px;
-  }
-  .readerHeader h2 {
-    font-size: 22px;
-  }
-  .readerHeader button {
-    font-size: 13px;
-    padding-inline: 12px;
-    gap: 8px;
-  }
-}
-
 @media (max-width: 600px) {
   .header {
-    height: 136px;
-    padding: 8px 20px 0;
-    grid-template-rows: 48px 80px;
+    padding-inline: 16px;
   }
   .chapterNav {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    display: flex;
+    justify-content: flex-start;
     align-self: stretch;
+    gap: 14px;
   }
   .chapterNav button {
-    min-height: 38px;
+    min-height: 36px;
     font-size: 10px;
     padding: 8px 2px;
   }
@@ -2098,15 +1904,12 @@
     left: 20%;
     right: 20%;
   }
-  .bookViewport {
-    gap: 24px;
-  }
   .bookSurround {
-    width: min(calc(100cqw - 40px), calc((100cqh - 108px) * 1.35));
-    aspect-ratio: 1.35;
-  }
-  .book {
-    aspect-ratio: 1.35;
+    --spread-ratio: 1.18;
+    --spread-width: min(
+      calc(100cqw - 28px),
+      calc((100cqh - 32px) * var(--spread-ratio))
+    );
   }
   .bookControls {
     padding: 6px 20px;
@@ -2115,22 +1918,6 @@
   }
   .readingHint {
     display: none;
-  }
-  .readerActions {
-    width: calc(100% - 40px);
-    gap: 12px;
-  }
-  .readerActions p {
-    font-size: 20px;
-  }
-  .readerActions > div > span {
-    font-size: 9px;
-    letter-spacing: 1.1px;
-  }
-  .readerActions > button {
-    font-size: 14px;
-    padding-inline: 14px;
-    gap: 8px;
   }
   .footer {
     flex-wrap: wrap;
@@ -2160,21 +1947,14 @@
   .headerCta svg {
     display: none;
   }
-  .readerActions p {
-    font-size: 18px;
-  }
-  .readerActions > button {
-    font-size: 13px;
-    padding-inline: 12px;
-  }
   .bookControls {
     padding-inline: 16px;
   }
 }
 @media (max-height: 700px) and (max-width: 600px) {
   .header {
-    height: 116px;
-    grid-template-rows: 44px 64px;
+    height: 84px;
+    grid-template-rows: 44px 32px;
   }
   .chapterNav button {
     min-height: 32px;
@@ -2210,7 +1990,7 @@
     padding-block: 3px;
   }
 }
-/* In landscape, the reading action sits beside the book to leave it room. */
+/* Short landscape windows give their available height to the spread. */
 @media (max-height: 500px) and (max-width: 1100px) and (min-width: 560px) {
   .header {
     height: 56px;
@@ -2245,27 +2025,16 @@
   .stage {
     grid-template-rows: minmax(0, 1fr) 48px;
   }
-  .bookViewport {
-    flex-direction: row;
-    gap: 28px;
-  }
   .bookSurround {
-    width: min(calc(100cqw - 220px), calc((100cqh - 28px) * 1.4));
-    margin: 0;
-    aspect-ratio: 1.4;
+    --spread-ratio: 1.5;
+    --spread-width: min(
+      calc(100cqw - 32px),
+      calc((100cqh - 28px) * var(--spread-ratio))
+    );
   }
   .book {
     --compact-title: clamp(16px, 6.2cqw, 30px);
     --compact-intro: clamp(10px, 3.3cqw, 16px);
-  }
-  .readerActions {
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
-    width: 160px;
-  }
-  .readerActions p {
-    font-size: 20px;
   }
   .bookControls {
     grid-template-columns: 1fr auto 1fr;
@@ -2295,6 +2064,9 @@
   }
   .book .contentsList button {
     min-height: 22px;
+  }
+  .book .edition {
+    display: none;
   }
 }
 
@@ -2337,8 +2109,8 @@
       margin: 1.5cqw 0;
     }
   }
-  /* Very short windows still retain both pages and a full-size reading action. */
-  @container (max-width: 259px) {
+  /* Very short windows still retain both pages. */
+  @container (max-width: 280px) {
     .book .sheet h2 {
       font-size: 16px;
     }
@@ -2375,6 +2147,10 @@
       font-size: 11px;
       -webkit-line-clamp: 3;
     }
+    .book .mountainPhoto .photoFrame,
+    .book .teaPhoto .photoFrame {
+      aspect-ratio: 1.4;
+    }
     .book .storySketch {
       height: 8cqw;
     }
@@ -2391,6 +2167,9 @@
     .book .invitationButton {
       min-height: 28px;
       font-size: 9px;
+    }
+    .book .handwritten {
+      margin-top: 1cqw;
     }
     .frontPrompt {
       font-size: 9px;
