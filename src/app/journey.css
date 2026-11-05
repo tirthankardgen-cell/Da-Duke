@@ -16,14 +16,14 @@
   min-height: 620px;
   overflow: hidden;
   background: var(--cream);
-  color: #4d5747;
+  color: #17645f;
   isolation: isolate;
 }
 .journey-paper {
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: radial-gradient(ellipse at 50% 42%, #fcf9ef 0, transparent 70%);
+  background: radial-gradient(ellipse at 50% 42%, #f3eee8 0, transparent 70%);
 }
 .journey-drawing {
   position: absolute;
@@ -40,11 +40,11 @@
 .drawing-hills {
   opacity: calc(var(--hills) * 0.75);
   transform: scale(var(--hill-scale));
-  color: #59664e;
+  color: #17645f;
 }
 .drawing-cafe {
   opacity: calc(var(--home) * 0.65);
-  color: #4c5c48;
+  color: #17645f;
   mask-image: linear-gradient(
     #0005 10%,
     transparent 30%,
@@ -70,7 +70,7 @@
 .journey-intro {
   opacity: var(--rome);
   transform: translateY(calc(var(--hills) * -50px));
-  background: radial-gradient(ellipse 350px 220px at 50% 50%, #f3eee4 35%, #f3eee4e6 66%, transparent 100%);
+  background: radial-gradient(ellipse 350px 220px at 50% 50%, #f3eee8 35%, #f3eee8e6 66%, transparent 100%);
 }
 .journey-kicker,
 .journey-hill-copy > span {
@@ -90,7 +90,7 @@
 .journey-opening em,
 .journey-hill-copy em,
 .journey-home-copy em {
-  color: #657453;
+  color: #17645f;
 }
 .journey-description {
   font-size: 12px;
@@ -117,7 +117,7 @@
   align-items: center;
   gap: 12px;
   font-size: 11px;
-  border-bottom: 1px solid #929c85;
+  border-bottom: 1px solid #17645f60;
   padding: 12px 0 8px;
 }
 .journey-secondary svg {
@@ -128,7 +128,7 @@
   opacity: calc(var(--hills) * (1 - var(--cloud)));
   justify-content: flex-start;
   padding-top: 15svh;
-  background: radial-gradient(ellipse 530px 180px at 50% 26%, #f3eee4ed 35%, #f3eee4aa 65%, transparent 100%);
+  background: radial-gradient(ellipse 530px 180px at 50% 26%, #f3eee8ed 35%, #f3eee8aa 65%, transparent 100%);
 }
 .journey-hill-copy p {
   font:
@@ -144,8 +144,8 @@
   transition: opacity 450ms ease;
   background: radial-gradient(
     ellipse at 50% 45%,
-    #f3eee4 5%,
-    #f3eee4ed 25%,
+    #f3eee8 5%,
+    #f3eee8ed 25%,
     transparent 64%
   );
 }
@@ -187,8 +187,8 @@
   height: 60%;
   background: radial-gradient(
     ellipse,
-    #fffdf4 35%,
-    #fffdf4b8 55%,
+    #f3eee8 35%,
+    #f3eee8b8 55%,
     transparent 72%
   );
   top: 5%;
@@ -216,7 +216,7 @@
 }
 .journey-chapter > span {
   margin: 0 12px;
-  color: #858b7b;
+  color: #48645f;
 }
 .journey-scroll {
   font-size: 8px;
@@ -237,12 +237,12 @@
   position: absolute;
   bottom: 0;
   height: 2px;
-  background: #d3d6c7;
+  background: #17645f30;
   width: 100%;
 }
 .journey-progress span {
   display: block;
-  background: #56694a;
+  background: #ff6845;
   width: var(--progress);
   height: 100%;
 }
@@ -334,8 +334,8 @@
   .journey-home-copy {
     background: radial-gradient(
       ellipse,
-      #f3eee4 10%,
-      #f3eee4e8 35%,
+      #f3eee8 10%,
+      #f3eee8e8 35%,
       transparent 80%
     );
   }

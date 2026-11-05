@@ -79,7 +79,7 @@
   margin-top: 19px;
 }
 .tea-story {
-  background: #eae9de;
+  background: #17645f0a;
 }
 .tea-story-layout {
   display: grid;
@@ -235,7 +235,7 @@
   white-space: pre-line;
 }
 .event-information {
-  background: #e7e7dc;
+  background: #17645f0a;
   padding: 34px;
 }
 .event-information dl {
@@ -245,7 +245,7 @@
   display: grid;
   grid-template-columns: 70px 1fr;
   gap: 14px;
-  border-bottom: 1px solid #ced2c1;
+  border-bottom: 1px solid #17645f30;
   padding-block: 15px;
   font-size: 12px;
 }
@@ -353,7 +353,7 @@
 .enquiry-form textarea,
 .preview-label textarea {
   width: 100%;
-  border: 1px solid #c7caba;
+  border: 1px solid #17645f30;
   background: transparent;
   padding: 12px 13px;
   font-size: 13px;
@@ -418,7 +418,7 @@
   margin-block: 20px;
 }
 .enquiry-dialog .preview-label textarea {
-  background: #eae9de;
+  background: #17645f0a;
   font-size: 12px;
   resize: vertical;
 }
@@ -436,13 +436,13 @@
   align-items: start;
 }
 .location-card {
-  background: #e7e7dc;
+  background: #17645f0a;
   padding: 40px;
 }
 .location-drawing {
   position: relative;
   margin-bottom: 32px;
-  border-bottom: 1px solid #c9cebb;
+  border-bottom: 1px solid #17645f30;
 }
 .location-drawing svg {
   width: 100%;
@@ -459,7 +459,7 @@
     500 27px "Cormorant Garamond",
     Georgia,
     serif;
-  background: #e7e7dc;
+  background: #17645f0a;
   padding: 10px 12px;
   text-align: center;
   white-space: nowrap;

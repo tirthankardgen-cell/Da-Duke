@@ -1,22 +1,24 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-cream: #f3eee4;
-  --color-forest: #273a31;
-  --color-brass: #a18459;
+  --color-cream: #f3eee8;
+  --color-forest: #17645f;
+  --color-brass: #ff6845;
   --font-sans: "Manrope Variable", sans-serif;
   --font-serif: "Cormorant Garamond", Georgia, serif;
 }
 :root {
-  --cream: #f3eee4;
-  --paper: #faf7ef;
-  --parchment: #e5ddcf;
-  --forest: #273a31;
-  --ink: #252b25;
-  --muted: #64695e;
-  --brass: #a18459;
-  --line: #d5d2c5;
-  --leaf: #6a775c;
+  --coral: #ff6845;
+  --teal: #17645f;
+  --cream: #f3eee8;
+  --paper: #f3eee8;
+  --parchment: #e1e7e1;
+  --forest: #17645f;
+  --ink: #123f3c;
+  --muted: #48645f;
+  --brass: #ff6845;
+  --line: #17645f30;
+  --leaf: #17645f;
 }
 * {
   box-sizing: border-box;
@@ -73,7 +75,7 @@ textarea {
   outline-offset: 5px;
 }
 ::selection {
-  background: #cbd3bd;
+  background: #ff684540;
   color: var(--forest);
 }
 h1,
@@ -158,22 +160,22 @@ img {
   background: var(--forest);
 }
 .button-green:hover {
-  background: #405346;
+  background: #124f4b;
 }
 .button-cream {
   color: var(--forest);
   background: var(--cream);
 }
 .button-cream:hover {
-  background: #fffdf6;
+  background: #f3eee8;
 }
 .button-outline {
-  border-color: #909b89;
+  border-color: #17645f60;
   background: transparent;
   color: var(--forest);
 }
 .button-outline:hover {
-  background: #e6e7db;
+  background: #17645f0d;
 }
 .button svg,
 .text-link svg,
@@ -196,7 +198,7 @@ img {
   min-height: 44px;
   padding-bottom: 7px;
   border: 0;
-  border-bottom: 1px solid #8e9885;
+  border-bottom: 1px solid #17645f60;
   background: transparent;
   font-size: 12px;
   line-height: 1.5;
@@ -289,14 +291,14 @@ img {
   justify-content: space-between;
   gap: 19px;
   min-height: 44px;
-  border: 1px solid #a7aa99;
+  border: 1px solid #17645f60;
   padding: 10px 16px;
   font-size: 11px;
   white-space: nowrap;
   transition: background 0.2s;
 }
 .header-cta:hover {
-  background: #e6e5d9;
+  background: #17645f0d;
 }
 .header-cta svg {
   width: 17px;
@@ -445,7 +447,7 @@ img {
   transform: rotate(-5deg);
 }
 .house-section {
-  background: #e9e9df;
+  background: #17645f0a;
 }
 .house-layout {
   display: grid;
@@ -462,7 +464,7 @@ img {
   content: "";
   position: absolute;
   inset: -13px 13px 13px -13px;
-  border: 1px solid #bec3b1;
+  border: 1px solid #17645f30;
   z-index: -1;
 }
 .house-photo img {
@@ -633,9 +635,9 @@ img {
   z-index: -2;
   background: linear-gradient(
     90deg,
-    #14261ff0 0%,
-    #182821bc 46%,
-    #18282150 100%
+    #103f3bf0 0%,
+    #103f3bbc 46%,
+    #103f3b50 100%
   );
 }
 .private-prompt .heritage-sketch {
@@ -648,21 +650,21 @@ img {
   padding-block: 90px;
 }
 .private-prompt .eyebrow {
-  color: #d6dccc;
+  color: #f3eee8;
   margin-bottom: 23px;
 }
 .private-prompt h2 {
   font-size: clamp(52px, 6vw, 80px);
 }
 .private-prompt em {
-  color: #d7dfcb;
+  color: #f3eee8;
 }
 .private-prompt-copy > p:not(.eyebrow) {
   max-width: 380px;
   font-size: 13px;
   margin-top: 22px;
   line-height: 2;
-  color: #e5e7db;
+  color: #f3eee8;
 }
 .private-prompt .button {
   margin-top: 30px;
@@ -765,13 +767,13 @@ img {
   gap: 100px;
 }
 .visit-section .eyebrow {
-  color: #d2d8c8;
+  color: #f3eee8;
 }
 .visit-section em {
-  color: #c6d0b7;
+  color: #f3eee8;
 }
 .visit-section .editorial-copy > p:not(.eyebrow) {
-  color: #d5dccc;
+  color: #f3eee8;
 }
 .visit-section .heritage-sketch {
   color: var(--cream);
@@ -783,7 +785,7 @@ img {
 }
 .visit-note {
   max-width: 310px;
-  border: 1px solid #6b7b68;
+  border: 1px solid #f3eee860;
   border-radius: 180px 180px 0 0;
   padding: 50px 34px 38px;
   justify-self: end;
@@ -793,13 +795,13 @@ img {
   width: 45px;
   height: 65px;
   margin: 0 auto 20px;
-  color: #c5cfb6;
+  color: #f3eee8;
 }
 .visit-note p,
 .visit-note address {
   font-size: 12px;
   margin-top: 15px;
-  color: #d5dccb;
+  color: #f3eee8;
   line-height: 1.9;
   font-style: normal;
   white-space: pre-line;
@@ -812,7 +814,7 @@ img {
   display: block;
   font-size: 21px;
   margin-top: 22px;
-  color: #c6d0b7;
+  color: #f3eee8;
 }
 .site-footer {
   padding-top: 65px;
@@ -898,7 +900,7 @@ dialog {
   padding: 0;
 }
 dialog::backdrop {
-  background: #17251fbd;
+  background: #103f3bbd;
   backdrop-filter: blur(4px);
 }
 .dialog-close {
@@ -920,7 +922,7 @@ dialog::backdrop {
 .lightbox-photo {
   position: relative;
   height: 66dvh;
-  background: #202820;
+  background: #103f3b;
 }
 .lightbox-photo img {
   object-fit: contain;
@@ -934,7 +936,7 @@ dialog::backdrop {
   text-align: center;
 }
 .lightbox-bottom button {
-  border: 1px solid #aeb59f;
+  border: 1px solid #f3eee860;
   background: none;
   width: 44px;
   height: 44px;
@@ -958,7 +960,7 @@ dialog::backdrop {
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  background: #e8e7dc;
+  background: #17645f0a;
   color: var(--muted);
 }
 .image-fallback svg {
@@ -1099,7 +1101,7 @@ dialog::backdrop {
     gap: 7px;
     width: 46px;
     height: 46px;
-    border: 1px solid #b9bdad;
+    border: 1px solid #17645f30;
     background: transparent;
   }
   .mobile-nav-toggle span {
@@ -1123,7 +1125,7 @@ dialog::backdrop {
     background: var(--cream);
     padding: 18px 40px 30px;
     border-bottom: 1px solid var(--line);
-    box-shadow: 0 20px 30px #273a3110;
+    box-shadow: 0 20px 30px #17645f10;
     max-height: calc(100dvh - 96px);
     overflow: auto;
   }
@@ -1365,7 +1367,7 @@ dialog::backdrop {
     font-size: 57px;
   }
   .private-prompt-shade {
-    background: linear-gradient(90deg, #18291fed, #1829219c);
+    background: linear-gradient(90deg, #103f3bed, #103f3b9c);
   }
   .private-prompt .heritage-sketch {
     width: 95%;
@@ -1485,3 +1487,11 @@ dialog::backdrop {
     scroll-behavior: auto !important;
   }
 }
+
+/* Reference palette: warm ivory, deep teal and a restrained coral accent. */
+.button-green { background: var(--coral); color: #0e302d; }
+.button-green:hover { background: var(--forest); color: var(--cream); }
+.header-cta { border-color: var(--coral); }
+.header-cta svg { color: var(--coral); }
+.desktop-nav a::after { background: var(--coral); }
+::selection { background: var(--coral); color: #0e302d; }
