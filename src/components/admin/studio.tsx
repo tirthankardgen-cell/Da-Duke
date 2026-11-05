@@ -35,6 +35,16 @@ const tabs: { id: Tab; title: string; short: string }[] = [
 ];
 
 function validateContent(content: SiteContent): string | null {
+  for (const key of ["cover", "alps", "himalayas"] as const) {
+    const copy = content.storybook[key];
+    if (!copy.title.trim() || !copy.description.trim()) {
+      const label =
+        key === "cover"
+          ? "storybook title page"
+          : `${key === "alps" ? "Alps" : "Himalayas"} chapter`;
+      return `Add a headline and introduction to the ${label}.`;
+    }
+  }
   for (const [key, copy] of Object.entries(content.pages)) {
     if (!copy.title.trim() || !copy.description.trim())
       return `Add a headline and introduction to the ${key} page.`;

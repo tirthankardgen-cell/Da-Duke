@@ -27,7 +27,9 @@ function isContent(value: unknown): value is SiteContent {
     !!content.settings &&
     Array.isArray(content.settings.hours) &&
     !!content.pages &&
-    Object.keys(initialContent.pages).filter((key) => key !== "carte").every((key) => key in content.pages) &&
+    Object.keys(initialContent.pages)
+      .filter((key) => key !== "carte")
+      .every((key) => key in content.pages) &&
     !!content.sections &&
     Object.keys(initialContent.sections).every(
       (key) => key in content.sections,
@@ -42,7 +44,34 @@ function isContent(value: unknown): value is SiteContent {
 }
 
 function migrate(content: SiteContent): SiteContent {
-  return { ...content, pages: { ...initialContent.pages, ...content.pages } };
+  const book = content.storybook;
+  const defaults = initialContent.storybook;
+  return {
+    ...content,
+    pages: { ...initialContent.pages, ...content.pages },
+    storybook: {
+      cover: { ...defaults.cover, ...book?.cover },
+      alps: { ...defaults.alps, ...book?.alps },
+      himalayas: { ...defaults.himalayas, ...book?.himalayas },
+      chapters: Array.isArray(book?.chapters)
+        ? defaults.chapters
+            .map(
+              (chapter) =>
+                book.chapters.find((saved) => saved.id === chapter.id) ||
+                chapter,
+            )
+            .sort((a, b) => {
+              const position = (id: string) => {
+                const index = book.chapters.findIndex(
+                  (chapter) => chapter.id === id,
+                );
+                return index < 0 ? defaults.chapters.length : index;
+              };
+              return position(a.id) - position(b.id);
+            })
+        : defaults.chapters,
+    },
+  };
 }
 
 function readStorage() {
@@ -51,7 +80,11 @@ function readStorage() {
       localStorage.getItem(STORAGE_KEY) || "null",
     ) as DemoState | null;
     return saved && isContent(saved.published) && isContent(saved.draft)
-      ? { ...saved, published: migrate(saved.published), draft: migrate(saved.draft) }
+      ? {
+          ...saved,
+          published: migrate(saved.published),
+          draft: migrate(saved.draft),
+        }
       : serverState;
   } catch {
     return serverState;

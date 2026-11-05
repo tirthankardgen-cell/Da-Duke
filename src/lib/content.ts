@@ -30,6 +30,70 @@ export type SectionCopy = PageCopy & {
   image: string;
 };
 
+export type BookChapterId = "alps" | "himalayas" | "table" | "house" | "visit";
+export type BookStory = SectionCopy & { quote: string; caption: string };
+export type StorybookContent = {
+  cover: PageCopy & { body: string; quote: string };
+  alps: BookStory;
+  himalayas: BookStory;
+  chapters: { id: BookChapterId; visible: boolean }[];
+};
+
+export const bookChapterLabels: Record<
+  BookChapterId,
+  { label: string; note: string }
+> = {
+  alps: { label: "The Alps", note: "A little European soul" },
+  himalayas: {
+    label: "The Himalayas",
+    note: "The hills, the gardens, the chai",
+  },
+  table: { label: "At the table", note: "Small pleasures, brought together" },
+  house: { label: "The House", note: "Good company. Unhurried hours." },
+  visit: { label: "Stay a little", note: "Find us, gather, make a memory" },
+};
+
+export const initialStorybook: StorybookContent = {
+  cover: {
+    eyebrow: "A TALE OF TWO WORLDS",
+    title: "Da Duke",
+    accent: "and Chai",
+    description: "Where the Alps meet the Himalayas.",
+    body: "The café culture of Europe. The tea gardens of Assam and North Bengal. And the little things that bring us together.",
+    quote: "Some journeys begin with a single cup.",
+  },
+  alps: {
+    eyebrow: "EUROPEAN IN SPIRIT",
+    title: "A little",
+    accent: "European soul.",
+    description:
+      "Of Alpine mornings, café windows, and the art of taking your time.",
+    body: "Imagine a morning in the Alps. A quiet village, a familiar café, the first light resting on a wooden table. Somewhere inside, a cup is being poured.\n\nIt is this feeling we return to: the warmth of an old-world café, the curve of a stone arch, a pastry broken in two. A little romance in the everyday.\n\nAt Da Duke and Chai, that European spirit finds another place to call home.",
+    quote: "An old-world state of mind. An open-hearted kind of welcome.",
+    linkLabel: "Step inside the House",
+    image: "terrace",
+    caption: "I. THE EUROPEAN DAYDREAM",
+  },
+  himalayas: {
+    eyebrow: "HIMALAYAN AT HEART",
+    title: "A little",
+    accent: "mountain mist.",
+    description: "From the hills of North Bengal to the tea country of Assam.",
+    body: "Then there are the other mountains. The Himalayan foothills, the mist around Darjeeling, and the green that seems to go on forever. Further east, Assam brings its own deep-rooted tea culture.\n\nHere, a cup is an invitation. To sit a little closer. To ask about the day. To let a conversation wander.\n\nThese places inspire the soul of our house: the warmth of chai, the generosity of a shared table, and the lovely feeling of belonging.",
+    quote: "The mountains lend their stillness. Chai does the rest.",
+    linkLabel: "Discover the tea ritual",
+    image: "mountains",
+    caption: "II. A HIMALAYAN REVERIE",
+  },
+  chapters: [
+    { id: "alps", visible: true },
+    { id: "himalayas", visible: true },
+    { id: "table", visible: true },
+    { id: "house", visible: true },
+    { id: "visit", visible: true },
+  ],
+};
+
 export type MediaItem = {
   id: string;
   src: string;
@@ -72,6 +136,7 @@ export type CafeEvent = {
 
 export type SiteContent = {
   version: 1;
+  storybook: StorybookContent;
   settings: {
     whatsapp: string;
     enquiryMessage: string;
@@ -130,6 +195,7 @@ export const eventCategories = [
 // This serializable model is also the starting point for the browser-only editor.
 export const initialContent: SiteContent = {
   version: 1,
+  storybook: initialStorybook,
   settings: {
     whatsapp: "",
     enquiryMessage:
@@ -308,7 +374,16 @@ export const initialContent: SiteContent = {
       body: "The pleasure of a conversation with no particular destination. Come as you are, find a comfortable corner, and let the afternoon unfold.",
     },
   ],
-  menuCategories: ["Chai & Tea", "Coffee", "Breakfast", "Small Plates", "European Classics", "Mains", "Desserts", "House Specials"],
+  menuCategories: [
+    "Chai & Tea",
+    "Coffee",
+    "Breakfast",
+    "Small Plates",
+    "European Classics",
+    "Mains",
+    "Desserts",
+    "House Specials",
+  ],
   menu: [
     {
       id: "chai",
@@ -370,10 +445,60 @@ export const initialContent: SiteContent = {
       featured: true,
       available: true,
     },
-    {"id": "breakfast", "name": "Herb butter eggs on toast", "description": "Sourdough, soft eggs and herb butter. A leisurely start to the day.", "category": "Breakfast", "price": "320", "image": "", "dietary": "", "featured": false, "available": true, "seasonal": false, "recommended": false},
-    {"id": "tart", "name": "Roasted tomato tart", "description": "Delicate pastry, slow-roasted tomatoes, cheese and basil.", "category": "European Classics", "price": "380", "image": "", "dietary": "", "featured": false, "available": true, "seasonal": false, "recommended": false},
-    {"id": "risotto", "name": "Woodland mushroom risotto", "description": "Creamy arborio rice, saut\u00e9ed mushrooms and parmesan.", "category": "Mains", "price": "480", "image": "", "dietary": "", "featured": false, "available": true, "seasonal": false, "recommended": true},
-    {"id": "custard", "name": "The tea garden cr\u00e8me", "description": "Assam tea-infused custard beneath a delicate caramel crust.", "category": "House Specials", "price": "290", "image": "", "dietary": "", "featured": false, "available": true, "seasonal": true, "recommended": false},
+    {
+      id: "breakfast",
+      name: "Herb butter eggs on toast",
+      description:
+        "Sourdough, soft eggs and herb butter. A leisurely start to the day.",
+      category: "Breakfast",
+      price: "320",
+      image: "",
+      dietary: "",
+      featured: false,
+      available: true,
+      seasonal: false,
+      recommended: false,
+    },
+    {
+      id: "tart",
+      name: "Roasted tomato tart",
+      description: "Delicate pastry, slow-roasted tomatoes, cheese and basil.",
+      category: "European Classics",
+      price: "380",
+      image: "",
+      dietary: "",
+      featured: false,
+      available: true,
+      seasonal: false,
+      recommended: false,
+    },
+    {
+      id: "risotto",
+      name: "Woodland mushroom risotto",
+      description: "Creamy arborio rice, saut\u00e9ed mushrooms and parmesan.",
+      category: "Mains",
+      price: "480",
+      image: "",
+      dietary: "",
+      featured: false,
+      available: true,
+      seasonal: false,
+      recommended: true,
+    },
+    {
+      id: "custard",
+      name: "The tea garden cr\u00e8me",
+      description:
+        "Assam tea-infused custard beneath a delicate caramel crust.",
+      category: "House Specials",
+      price: "290",
+      image: "",
+      dietary: "",
+      featured: false,
+      available: true,
+      seasonal: true,
+      recommended: false,
+    },
   ],
   media: [
     {

@@ -5,11 +5,10 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { useContent } from "@/components/demo-content";
-import JourneyHero from "@/components/journey-hero";
+import Storybook from "@/components/storybook/storybook";
 import HeritageSketch from "@/components/heritage-sketch";
 import { Arrow } from "@/components/illustrations";
 import {
-  HomeSections,
   PageIntro,
   DualitySection,
   HousePreview,
@@ -191,6 +190,8 @@ export default function Cafe({
     }
   }, [pathname, preview]);
 
+  if (isHome) return <Storybook preview={preview} />;
+
   return (
     <div className="site" data-motion={paused ? "still" : "live"}>
       <a className="skip-link" href="#main">
@@ -206,7 +207,7 @@ export default function Cafe({
       )}
       <header
         id="top"
-        className={`site-header ${isHome ? "site-header-overlay" : ""}`}
+        className="site-header"
         onClick={(event) => {
           if ((event.target as Element).closest("a")) setNavOpen(false);
         }}
@@ -270,86 +271,70 @@ export default function Cafe({
         </nav>
       </header>
       <main id="main" tabIndex={-1} className={`${page}-page`}>
-        {isHome ? (
-          <>
-            <JourneyHero paused={paused} onPause={setPaused} />
-            <div id="welcome" className="heritage-strip">
+        <>
+          {[
+            "house",
+            "table",
+            "carte",
+            "gatherings",
+            "private",
+            "visit",
+            "gallery",
+          ].includes(page) && <PageIntro page={page as PageId} />}
+          {page === "house" && (
+            <>
+              <DualitySection eager />
+              <HousePreview extended />
+              <VisitSection />
+            </>
+          )}
+          {page === "carte" && <Carte />}
+          {page === "table" && (
+            <>
+              <RitualSection full />
+              <VisitSection />
+            </>
+          )}
+          {page === "gatherings" && (
+            <>
+              <GatheringsList />
+              <PrivatePrompt />
+            </>
+          )}
+          {page === "event" && <EventDetails slug={slug} />}
+          {page === "private" && <PrivatePage />}
+          {page === "visit" && <VisitDetails />}
+          {page === "gallery" && (
+            <>
+              <GallerySection full />
+              <VisitSection />
+            </>
+          )}
+          {(page === "privacy" || page === "terms") && (
+            <LegalPage terms={page === "terms"} />
+          )}
+          {page === "not-found" && (
+            <section className="missing-page section-spacing">
+              <HeritageSketch kind="rome" />
               <div className="shell">
-                <span>EUROPEAN IN SPIRIT</span>
-                <i aria-hidden="true">✳</i>
-                <span>INSPIRED BY THE TEA HILLS</span>
-                <i aria-hidden="true">✳</i>
-                <span>ALWAYS, A WARM WELCOME</span>
+                <p className="eyebrow">404 · A LITTLE OFF THE BEATEN PATH</p>
+                <h1>
+                  Shall we find
+                  <br />
+                  <em>our way back?</em>
+                </h1>
+                <p>
+                  This page seems to have wandered. There’s still a warm welcome
+                  at the house.
+                </p>
+                <Link href="/" className="button button-green">
+                  Back to Da Duke and Chai
+                  <Arrow />
+                </Link>
               </div>
-            </div>
-            <HomeSections />
-          </>
-        ) : (
-          <>
-            {[
-              "house",
-              "table",
-              "carte",
-              "gatherings",
-              "private",
-              "visit",
-              "gallery",
-            ].includes(page) && <PageIntro page={page as PageId} />}
-            {page === "house" && (
-              <>
-                <DualitySection eager />
-                <HousePreview extended />
-                <VisitSection />
-              </>
-            )}
-            {page === "carte" && <Carte />}
-            {page === "table" && (
-              <>
-                <RitualSection full />
-                <VisitSection />
-              </>
-            )}
-            {page === "gatherings" && (
-              <>
-                <GatheringsList />
-                <PrivatePrompt />
-              </>
-            )}
-            {page === "event" && <EventDetails slug={slug} />}
-            {page === "private" && <PrivatePage />}
-            {page === "visit" && <VisitDetails />}
-            {page === "gallery" && (
-              <>
-                <GallerySection full />
-                <VisitSection />
-              </>
-            )}
-            {(page === "privacy" || page === "terms") && (
-              <LegalPage terms={page === "terms"} />
-            )}
-            {page === "not-found" && (
-              <section className="missing-page section-spacing">
-                <HeritageSketch kind="rome" />
-                <div className="shell">
-                  <p className="eyebrow">404 · A LITTLE OFF THE BEATEN PATH</p>
-                  <h1>
-                    Shall we find
-                    <br />
-                    <em>our way back?</em>
-                  </h1>
-                  <p>
-                    This page seems to have wandered. There’s still a warm
-                    welcome at the house.
-                  </p>
-                  <Link href="/" className="button button-green">
-                    Back to Da Duke and Chai
-                    <Arrow />
-                  </Link>
-                </div>
-              </section>
-            )}
-          </>
-        )}
+            </section>
+          )}
+        </>
       </main>
       <footer className="site-footer">
         <div className="shell">

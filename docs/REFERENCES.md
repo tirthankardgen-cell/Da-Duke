@@ -41,3 +41,13 @@ The original JPEG downloads are retained locally under ignored `output/source-im
 The arch, tea cup, leaves, wreath, favicon and social-card layout were created for this website. The brief update adds original SVG ink studies of Rome’s Colosseum, the Eiffel Tower, Florence’s Duomo, Himalayan ridgelines and a tea service. They are interpretive illustrations, not claims about the café’s location. Background motion is CSS-based, offers a pause control and respects reduced motion.
 
 No music, remote analytics, advertising or third-party embeds are loaded. The CMS demonstrates statistics with actual aggregate page and CTA counts kept only in the current browser, as described in the privacy page. Uploaded demo images are processed locally; the seeded photos and their source licences remain unchanged.
+
+## Alps meet Himalayas storybook preview
+
+On 5 November 2026, the user supplied [Biryani Legends Template / photos](https://21stdev-my-components-one.vercel.app/#biryani-legends-template/photos) as the new design reference. It was inspected in Google Chrome with Playwright, and its public HTML, JavaScript and CSS were examined to understand the two-page composition, paper, binding, typography, contents list and page-turn behavior. Research captures and downloaded reference files remain in ignored `output/`.
+
+The Da Duke and Chai implementation is authored for this repository using React and CSS page turns. It does not include the reference's restaurant stories, branding, embedded photographs or GSAP bundle. The new Alpine village, mountain emblem, tea branch, teacup seal and flourishes are original SVG line drawings in `src/components/storybook/book-illustrations.tsx`; the Himalayan landscape and tea-service studies reuse the project's own original artwork.
+
+Existing licensed local photographs supply the European café, Himalayan scenery, tea and pastries. They retain the moodboard disclosure; the Himalayan image is not claimed to show Assam or Darjeeling. No new business location, provenance, dates or operational details are asserted.
+
+The storybook adds **Allura** for handwritten details and **Crimson Pro** for book text alongside Cormorant Garamond. Both are bundled locally through Fontsource, with their font licences included in the installed packages. The scoped palette uses forest green `#314c3b`, terracotta `#9b5035`, paper `#f0e6cc` and warm neutral ink. Paper grain is a locally defined SVG filter, with no third-party image or font request.

@@ -10,9 +10,12 @@ export const siteUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL
 export function pageMetadata(id: PageId, path: string): Metadata {
   const title =
     id === "home"
-      ? "Da Duke and Chai | A European state of mind. A Himalayan cup of soul."
+      ? "Da Duke and Chai | Where the Alps meet the Himalayas"
       : `${pageLinks.find((link) => link.id === id)?.label || (id === "table" ? "The Table" : "The Journal")} | Da Duke and Chai`;
-  const description = initialContent.pages[id].description;
+  const description =
+    id === "home"
+      ? `${initialContent.storybook.cover.description} ${initialContent.storybook.cover.body}`
+      : initialContent.pages[id].description;
   return {
     title,
     description,

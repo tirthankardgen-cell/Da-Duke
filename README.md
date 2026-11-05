@@ -2,13 +2,23 @@
 
 A European state of mind. A Himalayan cup of soul.
 
-A responsive **Next.js 16 / React 19 / TypeScript** café demo, updated from [the website brief](da_duke_and_chai_website_brief.md). The public site and a working browser-only CMS are included. **No backend, database, booking service or payment system is connected.**
+A responsive **Next.js 16 / React 19 / TypeScript** café demo, updated from [the website brief](da_duke_and_chai_website_brief.md). This preview introduces an illustrated, page-turning storybook: **where the Alps meet the Himalayas**, and European café culture meets Assam and North Bengal. The public site and a working browser-only CMS are included. **No backend, database, booking service or payment system is connected.**
 
-![The illustrated Da Duke and Chai landing page](docs/preview/brief-home.webp)
+![The Da Duke and Chai storybook](docs/preview/storybook-desktop.webp)
+
+## The storybook preview
+
+Branch: `codex/preview-alps-himalayas-book`.
+
+The homepage takes its open-book direction from the supplied [Biryani Legends / photos reference](https://21stdev-my-components-one.vercel.app/#biryani-legends-template/photos). Original Alpine, Himalayan and tea illustrations, forest-green binding, textured paper, locally served type, and the café's existing licensed photographs create the Da Duke and Chai edition.
+
+Turn pages with the chapter navigation, contents list, arrow buttons, keyboard arrows, a mouse wheel over the book, or a horizontal swipe. Each chapter has a shareable hash such as `/#himalayas`; browser back/forward restores the chapter. On phones, the pages stack vertically at a readable size with accessible page controls. **Still pages** and the system reduced-motion setting suppress the page-turn animation.
+
+In **Pages & stories**, edit the title page, dedication, Alps and Himalayas copy and photographs. Arrange or hide chapters in **The chapters of the book**. The table, house and visit chapters use the shared section copy; table highlights follow featured, available menu selections. Existing saved CMS content receives the new storybook defaults while retaining its edits. Draft preview and browser-local publication also apply to the storybook.
 
 ## Explore the demo
 
-- `/` — the illustrated Rome-to-the-Himalayas journey, brand duality, house, signature ritual, upcoming gatherings, private occasions, gallery and visit invitation.
+- `/` — the open storybook: contents and title page, the Alps, the Himalayas, the table, the house and a visit invitation. Chapters link to the complete menu, gatherings, journal and enquiry pages.
 - `/the-house` — an editorial introduction to the concept and atmosphere.
 - `/the-table` — a filterable concept menu, optional prices, availability and featured selections.
 - `/gatherings` and `/gatherings/[slug]` — events published through the demo CMS, India-time dates, current/upcoming/archive sections and cancellation/postponement notices.
@@ -21,7 +31,7 @@ A responsive **Next.js 16 / React 19 / TypeScript** café demo, updated from [th
 
 The original `/our-story`, `/menu`, `/the-space` and `/visit` URLs redirect permanently to the corresponding new pages. The optional journal is omitted until there is approved editorial content.
 
-Original line drawings of the **Colosseum, Eiffel Tower, Florence’s Duomo and Himalayan ridges** continue throughout the pages. Motion is restrained, can be paused, and honours the system reduced-motion preference. The wordmark returns to the landing page; there is no “Home” navigation item.
+Original line drawings of **Alpine villages, Himalayan ridges, tea branches and a tea service** appear in the book. The **Colosseum, Eiffel Tower and Florence’s Duomo** continue through the supporting pages. Motion is restrained, can be paused, and honours the system reduced-motion preference. The wordmark returns to the landing page; there is no “Home” navigation item.
 
 ## Try the CMS
 
@@ -35,7 +45,7 @@ The “Use demo credentials” button fills the form. This is a demonstration of
 The studio supports:
 
 - **Overview:** actual page views, tab visits, WhatsApp-link clicks, directions clicks, popular pages and screen-size groups from this browser; 7- and 30-day views. No fabricated audience metrics.
-- **Pages & stories:** edit page headlines and introductions, shared section copy and images, House notes, and homepage section order/visibility.
+- **Pages & stories:** edit the storybook, page headlines and introductions, shared section copy and images, House notes, and homepage chapter order/visibility.
 - **Gatherings:** create and edit drafts, choose uploaded posters, validate unique slugs and date ranges, preview details, feature events, publish/unpublish, and set sold-out/cancelled/postponed states.
 - **The menu:** edit categories, selections, descriptions, optional prices, dietary labels, availability, images and homepage features.
 - **Media library:** upload or replace JPG/PNG/WebP/AVIF images, edit captions and alt text, select collection and crop focus, and reorder the gallery. Uploads are resized locally to at most 1600 pixels on the longest edge.
@@ -86,17 +96,18 @@ To deploy to Vercel, import [tirthankardgen-cell/Da-Duke](https://github.com/tir
 - `src/lib/demo-analytics.ts` — local aggregate counts; no messages, visitor identifiers or remote tracking.
 - `src/lib/site-utils.ts` — event timing, URL validation and WhatsApp message composition.
 - `src/components/cafe.tsx`, `public-sections.tsx`, `gatherings.tsx`, `gallery.tsx`, `enquiry.tsx` — public experience.
-- `src/components/journey-hero.tsx`, `heritage-sketch.tsx` — original animated illustration work.
+- `src/components/storybook/` — responsive book, page turns, chapter navigation, original Alpine and botanical illustrations, and scoped styles.
+- `src/components/heritage-sketch.tsx` — original architectural and landscape illustration work. The former scroll hero remains in `journey-hero.tsx` for reference.
 - `src/app/` — routes, metadata and responsive styles.
 - `scripts/site-utils.test.mjs` — event/date/enquiry contract tests.
 
-See [verification notes](docs/VERIFICATION.md) and [image/design references](docs/REFERENCES.md). Browser QA artifacts remain in ignored `output/playwright/`; selected previews are committed in `docs/preview/`.
+See [storybook verification](docs/STORYBOOK-PREVIEW.md), [previous verification notes](docs/VERIFICATION.md) and [image/design references](docs/REFERENCES.md). Browser QA artifacts remain in ignored `output/playwright/`; selected previews are committed in `docs/preview/`. GitHub Actions also runs on `codex/preview-*` branch pushes.
 
 Before a real launch, supply the brief’s approved business details, menu, photography, events and legal text, then replace demo access/local persistence with the separately scoped backend.
 
 ## The Carte demo
 
-`/the-carte` is the food and drinks menu. The six public navigation links are The House, The Carte, Gatherings, Private Affairs, The Journal and Visit Us. `/the-table` and `/gallery` remain available for existing links; `/the-journal` uses the editable visual-journal content.
+`/the-carte` is the food and drinks menu. On the supporting pages, the six public navigation links are The House, The Carte, Gatherings, Private Affairs, The Journal and Visit Us. The homepage uses the storybook's chapter navigation. `/the-table` and `/gallery` remain available for existing links; `/the-journal` uses the editable visual-journal content.
 
 In `/admin`, use **The menu** to add/delete dishes, change categories, descriptions and prices, move items earlier/later, and set availability, seasonal, recommendation and signature labels. Category order follows the category list; reassign dishes before removing a category. Upload photos in **Media library**, then choose them on a dish. Set an optional PDF URL in **House settings**. **Preview** opens The Carte with the draft; **Publish demo** updates this browser's public view. Older saved drafts retain their content and receive the new Carte page introduction.
 

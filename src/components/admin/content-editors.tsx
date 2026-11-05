@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRef, useState, type SetStateAction } from "react";
 import {
   eventCategories,
+  bookChapterLabels,
   pageLinks,
   weekdays,
   type SiteContent,
@@ -11,6 +12,7 @@ import {
   type SectionId,
   type CafeEvent,
   type MediaItem,
+  type StorybookContent,
 } from "@/lib/content";
 import { slugify, whatsappUrl, validateEvent } from "@/lib/site-utils";
 
@@ -46,12 +48,14 @@ function ImageSelect({
 }
 
 export function PagesEditor({ draft, change }: EditorProps) {
-  const [selection, setSelection] = useState("page:home");
+  const [selection, setSelection] = useState("book:cover");
   const [group, id] = selection.split(":");
   const copy =
-    group === "page"
-      ? draft.pages[id as PageId]
-      : draft.sections[id as SectionId];
+    group === "book"
+      ? draft.storybook[id as "cover" | "alps" | "himalayas"]
+      : group === "page"
+        ? draft.pages[id as PageId]
+        : draft.sections[id as SectionId];
   const labels: Record<string, string> = {
     eyebrow: "Small introductory line",
     title: "Headline",
@@ -59,9 +63,19 @@ export function PagesEditor({ draft, change }: EditorProps) {
     description: "Introduction",
     body: "Body copy",
     linkLabel: "Link label",
+    quote: "Quotation",
+    caption: "Photograph heading",
   };
   function changeCopy(key: string, value: string) {
-    if (group === "page")
+    if (group === "book")
+      change({
+        ...draft,
+        storybook: {
+          ...draft.storybook,
+          [id]: { ...copy, [key]: value },
+        } as StorybookContent,
+      });
+    else if (group === "page")
       change({
         ...draft,
         pages: { ...draft.pages, [id]: { ...copy, [key]: value } },
@@ -73,12 +87,12 @@ export function PagesEditor({ draft, change }: EditorProps) {
       });
   }
   function reorder(index: number, direction: number) {
-    const sections = [...draft.homeSections];
-    [sections[index], sections[index + direction]] = [
-      sections[index + direction],
-      sections[index],
+    const chapters = [...draft.storybook.chapters];
+    [chapters[index], chapters[index + direction]] = [
+      chapters[index + direction],
+      chapters[index],
     ];
-    change({ ...draft, homeSections: sections });
+    change({ ...draft, storybook: { ...draft.storybook, chapters } });
   }
   return (
     <div className="editor-columns">
@@ -94,15 +108,24 @@ export function PagesEditor({ draft, change }: EditorProps) {
               value={selection}
               onChange={(event) => setSelection(event.target.value)}
             >
+              <optgroup label="The homepage storybook">
+                <option value="book:cover">Title page & dedication</option>
+                <option value="book:alps">The Alps chapter</option>
+                <option value="book:himalayas">The Himalayas chapter</option>
+              </optgroup>
               <optgroup label="Page introductions">
-                {Object.keys(draft.pages).map((key) => (
-                  <option key={key} value={`page:${key}`}>
-                    {key === "home"
-                      ? "Landing page / hero"
-                      : pageLinks.find((link) => link.id === key)?.label ||
-                        (key === "table" ? "The Table (legacy page)" : "The Journal")}
-                  </option>
-                ))}
+                {Object.keys(draft.pages)
+                  .filter((key) => key !== "home")
+                  .map((key) => (
+                    <option key={key} value={`page:${key}`}>
+                      {key === "home"
+                        ? "Landing page / hero"
+                        : pageLinks.find((link) => link.id === key)?.label ||
+                          (key === "table"
+                            ? "The Table (legacy page)"
+                            : "The Journal")}
+                    </option>
+                  ))}
               </optgroup>
               <optgroup label="Shared editorial sections">
                 {Object.keys(draft.sections).map((key) => (
@@ -143,19 +166,28 @@ export function PagesEditor({ draft, change }: EditorProps) {
               onChange={(value) => changeCopy("image", value)}
             />
           )}
+          {group === "book" && (id === "alps" || id === "himalayas") && (
+            <ImageSelect
+              draft={draft}
+              value={draft.storybook[id].image}
+              onChange={(value) => changeCopy("image", value)}
+            />
+          )}
         </div>
       </section>
       <div>
         <section className="admin-panel">
           <div className="panel-heading">
-            <h3>The flow of the page</h3>
-            <span>HOMEPAGE SECTIONS</span>
+            <h3>The chapters of the book</h3>
+            <span>HOMEPAGE STORYBOOK</span>
           </div>
           <p className="admin-help">
-            Arrange the chapters and choose what appears on the landing page.
+            Arrange or hide chapters. The table, house and visit pages use the
+            shared editorial sections. Menu highlights come from featured,
+            available dishes.
           </p>
           <div className="section-sort-list">
-            {draft.homeSections.map((section, i) => (
+            {draft.storybook.chapters.map((section, i) => (
               <div key={section.id}>
                 <label className="admin-checkbox">
                   <input
@@ -164,19 +196,18 @@ export function PagesEditor({ draft, change }: EditorProps) {
                     onChange={(event) =>
                       change({
                         ...draft,
-                        homeSections: draft.homeSections.map((item) =>
-                          item.id === section.id
-                            ? { ...item, visible: event.target.checked }
-                            : item,
-                        ),
+                        storybook: {
+                          ...draft.storybook,
+                          chapters: draft.storybook.chapters.map((item) =>
+                            item.id === section.id
+                              ? { ...item, visible: event.target.checked }
+                              : item,
+                          ),
+                        },
                       })
                     }
                   />
-                  <span>
-                    {section.id === "duality"
-                      ? "Two worlds"
-                      : section.id[0].toUpperCase() + section.id.slice(1)}
-                  </span>
+                  <span>{bookChapterLabels[section.id].label}</span>
                 </label>
                 <div>
                   <button
@@ -188,7 +219,7 @@ export function PagesEditor({ draft, change }: EditorProps) {
                   </button>
                   <button
                     aria-label={`Move ${section.id} later`}
-                    disabled={i === draft.homeSections.length - 1}
+                    disabled={i === draft.storybook.chapters.length - 1}
                     onClick={() => reorder(i, 1)}
                   >
                     ↓
@@ -698,19 +729,54 @@ export function MenuEditor({ draft, change }: EditorProps) {
                 />
               </label>
               <div className="form-row">
-                {[[-1, "Move earlier"], [1, "Move later"]].map(([delta, label]) => {
-                  const index = draft.menu.findIndex(entry => entry.id === item.id);
+                {[
+                  [-1, "Move earlier"],
+                  [1, "Move later"],
+                ].map(([delta, label]) => {
+                  const index = draft.menu.findIndex(
+                    (entry) => entry.id === item.id,
+                  );
                   const target = index + Number(delta);
-                  return <button key={label} className="admin-small-button" disabled={target < 0 || target >= draft.menu.length} onClick={() => {
-                    const menu = [...draft.menu];
-                    [menu[index], menu[target]] = [menu[target], menu[index]];
-                    change({ ...draft, menu });
-                  }}>{label}</button>;
+                  return (
+                    <button
+                      key={label}
+                      className="admin-small-button"
+                      disabled={target < 0 || target >= draft.menu.length}
+                      onClick={() => {
+                        const menu = [...draft.menu];
+                        [menu[index], menu[target]] = [
+                          menu[target],
+                          menu[index],
+                        ];
+                        change({ ...draft, menu });
+                      }}
+                    >
+                      {label}
+                    </button>
+                  );
                 })}
               </div>
-              <label className="admin-checkbox"><input type="checkbox" checked={!!item.seasonal} onChange={e => update({ seasonal: e.target.checked })} />Seasonal dish</label>
-              <label className="admin-checkbox"><input type="checkbox" checked={!!item.recommended} onChange={e => update({ recommended: e.target.checked })} />Chef’s recommendation</label>
-              <p className="admin-help">Upload photographs in Media, then select one above. Category order follows the list; reassign items before removing a category.</p>
+              <label className="admin-checkbox">
+                <input
+                  type="checkbox"
+                  checked={!!item.seasonal}
+                  onChange={(e) => update({ seasonal: e.target.checked })}
+                />
+                Seasonal dish
+              </label>
+              <label className="admin-checkbox">
+                <input
+                  type="checkbox"
+                  checked={!!item.recommended}
+                  onChange={(e) => update({ recommended: e.target.checked })}
+                />
+                Chef’s recommendation
+              </label>
+              <p className="admin-help">
+                Upload photographs in Media, then select one above. Category
+                order follows the list; reassign items before removing a
+                category.
+              </p>
               <label className="admin-checkbox">
                 <input
                   type="checkbox"
