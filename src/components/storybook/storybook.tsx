@@ -50,6 +50,16 @@ function chapterSnapshot() {
   return window.location.hash.slice(1) || "contents";
 }
 
+function subscribeToSinglePage(notify: () => void) {
+  const query = window.matchMedia("(max-width: 900px)");
+  query.addEventListener("change", notify);
+  return () => query.removeEventListener("change", notify);
+}
+
+function singlePageSnapshot() {
+  return window.matchMedia("(max-width: 900px)").matches;
+}
+
 function ChapterLink({
   href,
   children,
@@ -97,23 +107,33 @@ export default function Storybook({ preview = false }: { preview?: boolean }) {
     () => ["contents", ...chapters],
     [chapters],
   );
-  const requestedChapter = useSyncExternalStore(
+  const location = useSyncExternalStore(
     subscribeToChapter,
     chapterSnapshot,
     () => "contents",
   );
+  const [requestedChapter, requestedSide] = location.split("/");
+  const singlePage = useSyncExternalStore(
+    subscribeToSinglePage,
+    singlePageSnapshot,
+    () => false,
+  );
+  const readingSide: Side = requestedSide === "right" ? "right" : "left";
   const active: ChapterId = chapterIds.includes(requestedChapter as ChapterId)
     ? (requestedChapter as ChapterId)
     : "contents";
   const activeIndex = chapterIds.indexOf(active);
   const [turn, setTurn] = useState<PageTurn | null>(null);
   const [still, setStill] = useState(false);
+  const [opening, setOpening] = useState<"closed" | "opening" | "open">(
+    preview ? "open" : "closed",
+  );
   const main = useRef<HTMLElement>(null);
   const book = useRef<HTMLDivElement>(null);
   const turnLocked = useRef(false);
   const restoreFocus = useRef(false);
   const touch = useRef<{ x: number; y: number } | null>(null);
-  const wheelGesture = useRef({ amount: 0, time: 0 });
+  const wheelGesture = useRef({ amount: 0, time: 0, lastTurn: 0 });
   const instagram = safeExternalUrl(settings.instagram);
   const selections = menu
     .filter((item) => item.available && item.featured)
@@ -128,15 +148,50 @@ export default function Storybook({ preview = false }: { preview?: boolean }) {
     }
   }, []);
 
+  const finishOpening = useCallback(() => {
+    setOpening("open");
+    if (restoreFocus.current) {
+      main.current?.focus({ preventScroll: true });
+      restoreFocus.current = false;
+    }
+  }, []);
+
+  const openBook = useCallback(() => {
+    if (opening !== "closed") return;
+    restoreFocus.current = !!book.current?.contains(document.activeElement);
+    if (still || window.matchMedia("(prefers-reduced-motion: reduce)").matches)
+      finishOpening();
+    else setOpening("opening");
+  }, [opening, still, finishOpening]);
+
+  useEffect(() => {
+    if (opening === "open") return;
+    if (opening === "opening") {
+      const timer = window.setTimeout(finishOpening, 1400);
+      return () => window.clearTimeout(timer);
+    }
+    let cancelled = false;
+    let timer = window.setTimeout(openBook, 2000);
+    void document.fonts.ready.then(() => {
+      if (cancelled) return;
+      window.clearTimeout(timer);
+      timer = window.setTimeout(openBook, 1000);
+    });
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+  }, [opening, openBook, finishOpening]);
+
   const goTo = useCallback(
-    (next: ChapterId) => {
-      if (next === active || turnLocked.current || !chapterIds.includes(next))
-        return;
-      const smallScreen = window.matchMedia("(max-width: 900px)").matches;
+    (next: ChapterId, side: Side = "left") => {
+      if (turnLocked.current || !chapterIds.includes(next)) return;
+      if (opening !== "open") finishOpening();
+      if (next === active && (!singlePage || side === readingSide)) return;
       const reduceMotion =
         still || window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       restoreFocus.current = !!book.current?.contains(document.activeElement);
-      if (!smallScreen && !reduceMotion) {
+      if (!singlePage && !reduceMotion && opening === "open") {
         turnLocked.current = true;
         setTurn({
           from: active,
@@ -148,14 +203,51 @@ export default function Storybook({ preview = false }: { preview?: boolean }) {
       window.history.pushState(
         null,
         "",
-        `${window.location.pathname}${window.location.search}#${next}`,
+        `${window.location.pathname}${window.location.search}#${next}${singlePage && side === "right" ? "/right" : ""}`,
       );
       window.dispatchEvent(new Event(chapterEvent));
-      if (smallScreen)
-        main.current?.scrollIntoView({ behavior: "instant", block: "start" });
-      if (smallScreen || reduceMotion) finishTurn();
+      if (singlePage || reduceMotion) finishTurn();
     },
-    [active, activeIndex, chapterIds, finishTurn, still],
+    [
+      active,
+      activeIndex,
+      chapterIds,
+      finishTurn,
+      still,
+      singlePage,
+      readingSide,
+      opening,
+      finishOpening,
+    ],
+  );
+
+  const movePage = useCallback(
+    (direction: -1 | 1) => {
+      if (opening !== "open") {
+        openBook();
+        return;
+      }
+      if (singlePage && direction === 1 && readingSide === "left") {
+        goTo(active, "right");
+        return;
+      }
+      if (singlePage && direction === -1 && readingSide === "right") {
+        goTo(active, "left");
+        return;
+      }
+      const next = chapterIds[activeIndex + direction];
+      if (next) goTo(next, direction === -1 ? "right" : "left");
+    },
+    [
+      opening,
+      openBook,
+      singlePage,
+      readingSide,
+      goTo,
+      active,
+      chapterIds,
+      activeIndex,
+    ],
   );
 
   useEffect(() => {
@@ -171,10 +263,12 @@ export default function Storybook({ preview = false }: { preview?: boolean }) {
     );
     const measure = () => {
       for (const page of pages) {
-        // Ignore fractional font rounding; long edited stories remain scrollable.
+        // Measurement only affects keyboard access, never the page's width.
         const overflow = page.scrollHeight > page.clientHeight + 2;
-        page.dataset.overflow = String(overflow);
-        page.tabIndex = overflow ? 0 : -1;
+        if (page.dataset.overflow !== String(overflow)) {
+          page.dataset.overflow = String(overflow);
+          page.tabIndex = overflow ? 0 : -1;
+        }
       }
     };
     const observer = new ResizeObserver(measure);
@@ -203,9 +297,12 @@ export default function Storybook({ preview = false }: { preview?: boolean }) {
         (event.target as HTMLElement).closest('[data-overflow="true"]')
       )
         return;
+      if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
+        event.preventDefault();
+        movePage(event.key === "ArrowRight" ? 1 : -1);
+        return;
+      }
       let next: ChapterId | undefined;
-      if (event.key === "ArrowRight") next = chapterIds[activeIndex + 1];
-      if (event.key === "ArrowLeft") next = chapterIds[activeIndex - 1];
       if (event.key === "Home") next = chapterIds[0];
       if (event.key === "End") next = chapterIds.at(-1);
       if (next) {
@@ -215,7 +312,6 @@ export default function Storybook({ preview = false }: { preview?: boolean }) {
     }
     function handleWheel(event: WheelEvent) {
       if (
-        window.matchMedia("(max-width: 900px)").matches ||
         event.ctrlKey ||
         (event.target as HTMLElement).closest("input, textarea, select") ||
         window.getSelection()?.toString()
@@ -237,12 +333,12 @@ export default function Storybook({ preview = false }: { preview?: boolean }) {
           (delta < 0 && scrollingPage.scrollTop > 0))
       )
         return;
-      const next = chapterIds[activeIndex + (delta > 0 ? 1 : -1)];
-      if (!next || !delta) return;
+      if (!delta) return;
       event.preventDefault();
       if (turnLocked.current) return;
       const now = performance.now();
       const gesture = wheelGesture.current;
+      if (now - gesture.lastTurn < 650) return;
       if (
         now - gesture.time > 200 ||
         Math.sign(gesture.amount) !== Math.sign(delta)
@@ -253,7 +349,8 @@ export default function Storybook({ preview = false }: { preview?: boolean }) {
         delta * (event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? 600 : 1);
       if (Math.abs(gesture.amount) > 100) {
         gesture.amount = 0;
-        goTo(next);
+        gesture.lastTurn = now;
+        movePage(delta > 0 ? 1 : -1);
       }
     }
     const element = book.current;
@@ -263,7 +360,7 @@ export default function Storybook({ preview = false }: { preview?: boolean }) {
       window.removeEventListener("keydown", handleKey);
       element?.removeEventListener("wheel", handleWheel);
     };
-  }, [activeIndex, chapterIds, goTo]);
+  }, [chapterIds, goTo, movePage]);
 
   function pageContent(id: ChapterId, side: Side) {
     if (id === "contents" && side === "left")
@@ -522,7 +619,11 @@ export default function Storybook({ preview = false }: { preview?: boolean }) {
     return (
       <section
         key={`${id}-${side}`}
-        className={`${styles.sheet} ${side === "left" ? styles.leftSheet : styles.rightSheet} ${id === "contents" && side === "right" ? styles.coverSheet : ""}`}
+        className={`${styles.sheet} ${side === "left" ? styles.leftSheet : styles.rightSheet}`}
+        inert={!decorative && singlePage && side !== readingSide}
+        aria-hidden={
+          !decorative && singlePage && side !== readingSide ? true : undefined
+        }
         aria-label={
           decorative
             ? undefined
@@ -550,15 +651,27 @@ export default function Storybook({ preview = false }: { preview?: boolean }) {
   const leftChapter = turn?.direction === "forward" ? turn.from : active;
   const rightChapter = turn?.direction === "backward" ? turn.from : active;
   const firstPage = activeIndex * 2 + 2;
+  const currentPage = firstPage + (readingSide === "right" ? 1 : 0);
+  const hasPrevious =
+    opening === "open" &&
+    (activeIndex > 0 || (singlePage && readingSide === "right"));
+  const hasNext =
+    opening !== "open" ||
+    activeIndex < chapterIds.length - 1 ||
+    (singlePage && readingSide === "left");
 
   return (
-    <div className={styles.experience} data-still={still}>
+    <div
+      className={styles.experience}
+      data-still={still}
+      data-opening={opening}
+    >
       <a
         className="skip-link"
         href="#storybook-main"
         onClick={(event) => {
           event.preventDefault();
-          main.current?.focus();
+          main.current?.focus({ preventScroll: true });
         }}
       >
         Skip to the storybook
@@ -617,66 +730,119 @@ export default function Storybook({ preview = false }: { preview?: boolean }) {
         <h1 className={styles.srOnly}>
           Da Duke and Chai — where the Alps meet the Himalayas
         </h1>
-        <div className={styles.bookSurround}>
-          <div
-            ref={book}
-            className={styles.book}
-            aria-label="An open book of two worlds"
-            aria-busy={!!turn}
-            onTouchStart={(event) => {
-              const point = event.touches[0];
-              touch.current =
-                event.touches.length === 1 && point.clientX > 24
-                  ? { x: point.clientX, y: point.clientY }
-                  : null;
-            }}
-            onTouchCancel={() => {
-              touch.current = null;
-            }}
-            onTouchEnd={(event) => {
-              if (!touch.current) return;
-              const point = event.changedTouches[0];
-              const dx = point.clientX - touch.current.x;
-              const dy = point.clientY - touch.current.y;
-              touch.current = null;
-              if (Math.abs(dx) > 65 && Math.abs(dx) > Math.abs(dy) * 1.5) {
-                const next = chapterIds[activeIndex + (dx < 0 ? 1 : -1)];
-                if (next) goTo(next);
-              }
-            }}
-          >
-            <div className={styles.binding} aria-hidden="true" />
-            <div className={styles.pageEdges} aria-hidden="true" />
-            <div className={styles.spread} inert={!!turn}>
-              {sheet(leftChapter, "left")}
-              {sheet(rightChapter, "right")}
-            </div>
-            <div className={styles.spine} aria-hidden="true" />
-            {turn && (
+        <div className={styles.bookViewport}>
+          <div className={styles.bookSurround}>
+            <div
+              ref={book}
+              className={styles.book}
+              role="group"
+              aria-label="An open book of two worlds"
+              data-side={readingSide}
+              aria-busy={!!turn || opening !== "open"}
+              onTouchStart={(event) => {
+                const point = event.touches[0];
+                touch.current =
+                  event.touches.length === 1 && point.clientX > 24
+                    ? { x: point.clientX, y: point.clientY }
+                    : null;
+              }}
+              onTouchCancel={() => {
+                touch.current = null;
+              }}
+              onTouchEnd={(event) => {
+                if (!touch.current) return;
+                const point = event.changedTouches[0];
+                const dx = point.clientX - touch.current.x;
+                const dy = point.clientY - touch.current.y;
+                touch.current = null;
+                if (Math.abs(dx) > 65 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+                  movePage(dx < 0 ? 1 : -1);
+                }
+              }}
+            >
+              <div className={styles.binding} aria-hidden="true" />
+              <div className={styles.pageEdges} aria-hidden="true" />
               <div
-                className={`${styles.turningLeaf} ${turn.direction === "forward" ? styles.turnForward : styles.turnBackward}`}
-                aria-hidden="true"
-                inert
-                onAnimationEnd={(event) => {
-                  if (event.target === event.currentTarget) finishTurn();
-                }}
+                className={styles.spread}
+                inert={!!turn || opening !== "open"}
+                aria-hidden={opening !== "open" ? true : undefined}
               >
-                <div className={styles.leafFront}>
-                  {sheet(
-                    turn.from,
-                    turn.direction === "forward" ? "right" : "left",
-                    true,
-                  )}
-                </div>
-                <div className={styles.leafBack}>
-                  {sheet(
-                    turn.to,
-                    turn.direction === "forward" ? "left" : "right",
-                    true,
-                  )}
-                </div>
+                {sheet(leftChapter, "left")}
+                {sheet(rightChapter, "right")}
               </div>
-            )}
+              <div className={styles.spine} aria-hidden="true" />
+              {opening !== "open" && (
+                <div
+                  className={styles.frontCover}
+                  onTransitionEnd={(event) => {
+                    if (
+                      event.target === event.currentTarget &&
+                      event.propertyName === "transform" &&
+                      opening === "opening"
+                    )
+                      finishOpening();
+                  }}
+                >
+                  <button
+                    type="button"
+                    className={styles.frontCoverFace}
+                    onClick={openBook}
+                    aria-label="Open the book"
+                    disabled={opening === "opening"}
+                  >
+                    <span className={styles.coverBorder} aria-hidden="true" />
+                    <TeaBranch className={styles.frontBranchLeft} />
+                    <TeaBranch className={styles.frontBranchRight} />
+                    <span className={styles.frontEyebrow}>
+                      A TALE OF TWO WORLDS
+                    </span>
+                    <MountainEmblem className={styles.frontMountains} />
+                    <span className={styles.frontTitle}>
+                      {storybook.cover.title}
+                      <em>{storybook.cover.accent}</em>
+                    </span>
+                    <span className={styles.frontSubtitle}>
+                      {storybook.cover.description}
+                    </span>
+                    <Flourish className={styles.frontFlourish} />
+                    <span className={styles.frontEdition}>
+                      EUROPE · NORTH BENGAL · ASSAM
+                    </span>
+                    <span className={styles.frontPrompt}>
+                      A story to open. A moment to keep.
+                    </span>
+                  </button>
+                  <div className={styles.frontCoverBack} aria-hidden="true">
+                    <TeaBranch />
+                  </div>
+                </div>
+              )}
+              {turn && (
+                <div
+                  className={`${styles.turningLeaf} ${turn.direction === "forward" ? styles.turnForward : styles.turnBackward}`}
+                  aria-hidden="true"
+                  inert
+                  onAnimationEnd={(event) => {
+                    if (event.target === event.currentTarget) finishTurn();
+                  }}
+                >
+                  <div className={styles.leafFront}>
+                    {sheet(
+                      turn.from,
+                      turn.direction === "forward" ? "right" : "left",
+                      true,
+                    )}
+                  </div>
+                  <div className={styles.leafBack}>
+                    {sheet(
+                      turn.to,
+                      turn.direction === "forward" ? "left" : "right",
+                      true,
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
         <div className={styles.bookControls}>
@@ -687,8 +853,11 @@ export default function Storybook({ preview = false }: { preview?: boolean }) {
           </p>
           <div className={styles.progressBlock}>
             <span className={styles.folio}>
-              pp. {String(firstPage).padStart(2, "0")} —{" "}
-              {String(firstPage + 1).padStart(2, "0")}
+              {opening !== "open"
+                ? "VOLUME ONE"
+                : singlePage
+                  ? `p. ${String(currentPage).padStart(2, "0")}`
+                  : `pp. ${String(firstPage).padStart(2, "0")} — ${String(firstPage + 1).padStart(2, "0")}`}
             </span>
             <span className={styles.progressTrack} aria-hidden="true">
               <span
@@ -703,16 +872,16 @@ export default function Storybook({ preview = false }: { preview?: boolean }) {
               type="button"
               className={styles.previous}
               aria-label="Previous page"
-              disabled={activeIndex === 0}
-              onClick={() => goTo(chapterIds[activeIndex - 1])}
+              disabled={!hasPrevious}
+              onClick={() => movePage(-1)}
             >
               <Arrow />
             </button>
             <button
               type="button"
               aria-label="Next page"
-              disabled={activeIndex === chapterIds.length - 1}
-              onClick={() => goTo(chapterIds[activeIndex + 1])}
+              disabled={!hasNext}
+              onClick={() => movePage(1)}
             >
               <Arrow />
             </button>
@@ -725,7 +894,10 @@ export default function Storybook({ preview = false }: { preview?: boolean }) {
           aria-atomic="true"
         >
           {active === "contents" ? "Contents" : bookChapterLabels[active].label}
-          . Pages {firstPage} and {firstPage + 1}.
+          .{" "}
+          {singlePage
+            ? `Page ${currentPage}.`
+            : `Pages ${firstPage} and ${firstPage + 1}.`}
         </p>
       </main>
       <footer className={styles.footer}>
