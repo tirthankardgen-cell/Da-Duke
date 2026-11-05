@@ -165,23 +165,10 @@ export default function Storybook({ preview = false }: { preview?: boolean }) {
   }, [opening, still, finishOpening]);
 
   useEffect(() => {
-    if (opening === "open") return;
-    if (opening === "opening") {
-      const timer = window.setTimeout(finishOpening, 1400);
-      return () => window.clearTimeout(timer);
-    }
-    let cancelled = false;
-    let timer = window.setTimeout(openBook, 2000);
-    void document.fonts.ready.then(() => {
-      if (cancelled) return;
-      window.clearTimeout(timer);
-      timer = window.setTimeout(openBook, 1000);
-    });
-    return () => {
-      cancelled = true;
-      window.clearTimeout(timer);
-    };
-  }, [opening, openBook, finishOpening]);
+    if (opening !== "opening") return;
+    const timer = window.setTimeout(finishOpening, 1400);
+    return () => window.clearTimeout(timer);
+  }, [opening, finishOpening]);
 
   const goTo = useCallback(
     (next: ChapterId, side: Side = "left") => {
@@ -278,7 +265,7 @@ export default function Storybook({ preview = false }: { preview?: boolean }) {
     }
     measure();
     return () => observer.disconnect();
-  }, [active, turn, storybook, sections, menu]);
+  }, [active, turn, opening, storybook, sections, menu]);
 
   useEffect(() => {
     function handleKey(event: KeyboardEvent) {
@@ -738,7 +725,7 @@ export default function Storybook({ preview = false }: { preview?: boolean }) {
               role="group"
               aria-label="An open book of two worlds"
               data-side={readingSide}
-              aria-busy={!!turn || opening !== "open"}
+              aria-busy={!!turn || opening === "opening"}
               onTouchStart={(event) => {
                 const point = event.touches[0];
                 touch.current =
@@ -809,11 +796,15 @@ export default function Storybook({ preview = false }: { preview?: boolean }) {
                       EUROPE · NORTH BENGAL · ASSAM
                     </span>
                     <span className={styles.frontPrompt}>
-                      A story to open. A moment to keep.
+                      Open the book <span aria-hidden="true">→</span>
                     </span>
                   </button>
-                  <div className={styles.frontCoverBack} aria-hidden="true">
-                    <TeaBranch />
+                  <div
+                    className={styles.frontCoverBack}
+                    aria-hidden="true"
+                    inert
+                  >
+                    {sheet(active, "left", true)}
                   </div>
                 </div>
               )}
@@ -847,9 +838,18 @@ export default function Storybook({ preview = false }: { preview?: boolean }) {
         </div>
         <div className={styles.bookControls}>
           <p className={styles.readingHint}>
-            <span className={styles.desktopHint}>Scroll, swipe or use</span>
-            <span className={styles.mobileHint}>Swipe or use</span>{" "}
-            <span aria-hidden="true">← →</span> to turn the page
+            {opening === "closed" ? (
+              <>
+                Click the cover or use <span aria-hidden="true">→</span> to open
+                the book
+              </>
+            ) : (
+              <>
+                <span className={styles.desktopHint}>Scroll, swipe or use</span>
+                <span className={styles.mobileHint}>Swipe or use</span>{" "}
+                <span aria-hidden="true">← →</span> to turn the page
+              </>
+            )}
           </p>
           <div className={styles.progressBlock}>
             <span className={styles.folio}>
@@ -880,7 +880,7 @@ export default function Storybook({ preview = false }: { preview?: boolean }) {
             <button
               type="button"
               aria-label="Next page"
-              disabled={!hasNext}
+              disabled={!hasNext || opening === "opening"}
               onClick={() => movePage(1)}
             >
               <Arrow />
@@ -893,11 +893,21 @@ export default function Storybook({ preview = false }: { preview?: boolean }) {
           aria-live="polite"
           aria-atomic="true"
         >
-          {active === "contents" ? "Contents" : bookChapterLabels[active].label}
-          .{" "}
-          {singlePage
-            ? `Page ${currentPage}.`
-            : `Pages ${firstPage} and ${firstPage + 1}.`}
+          {opening === "closed" ? (
+            "Cover. Select Open the book to begin."
+          ) : opening === "opening" ? (
+            "Opening the book."
+          ) : (
+            <>
+              {active === "contents"
+                ? "Contents"
+                : bookChapterLabels[active].label}
+              .{" "}
+              {singlePage
+                ? `Page ${currentPage}.`
+                : `Pages ${firstPage} and ${firstPage + 1}.`}
+            </>
+          )}
         </p>
       </main>
       <footer className={styles.footer}>
