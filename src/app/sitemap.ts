@@ -4,11 +4,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     "",
     "/the-house",
+    "/the-carte",
     "/the-table",
     "/gatherings",
     "/private-affairs",
     "/visit-us",
     "/gallery",
+    "/the-journal",
     "/privacy",
     "/terms",
   ].map((path) => ({ url: `${siteUrl}${path}` }));

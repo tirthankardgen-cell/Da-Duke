@@ -93,3 +93,11 @@ To deploy to Vercel, import [tirthankardgen-cell/Da-Duke](https://github.com/tir
 See [verification notes](docs/VERIFICATION.md) and [image/design references](docs/REFERENCES.md). Browser QA artifacts remain in ignored `output/playwright/`; selected previews are committed in `docs/preview/`.
 
 Before a real launch, supply the brief’s approved business details, menu, photography, events and legal text, then replace demo access/local persistence with the separately scoped backend.
+
+## The Carte demo
+
+`/the-carte` is the food and drinks menu. The six public navigation links are The House, The Carte, Gatherings, Private Affairs, The Journal and Visit Us. `/the-table` and `/gallery` remain available for existing links; `/the-journal` uses the editable visual-journal content.
+
+In `/admin`, use **The menu** to add/delete dishes, change categories, descriptions and prices, move items earlier/later, and set availability, seasonal, recommendation and signature labels. Category order follows the category list; reassign dishes before removing a category. Upload photos in **Media library**, then choose them on a dish. Set an optional PDF URL in **House settings**. **Preview** opens The Carte with the draft; **Publish demo** updates this browser's public view. Older saved drafts retain their content and receive the new Carte page introduction.
+
+This is intentionally a client demonstration: content and uploaded images live in localStorage in this browser, not a shared database. Sample prices are illustrative. The demo login is not secure authentication and publishing does not update other visitors' browsers.

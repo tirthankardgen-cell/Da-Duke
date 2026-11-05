@@ -100,7 +100,7 @@ export function PagesEditor({ draft, change }: EditorProps) {
                     {key === "home"
                       ? "Landing page / hero"
                       : pageLinks.find((link) => link.id === key)?.label ||
-                        "Gallery"}
+                        (key === "table" ? "The Table (legacy page)" : "The Journal")}
                   </option>
                 ))}
               </optgroup>
@@ -697,6 +697,20 @@ export function MenuEditor({ draft, change }: EditorProps) {
                   onChange={(e) => update({ dietary: e.target.value })}
                 />
               </label>
+              <div className="form-row">
+                {[[-1, "Move earlier"], [1, "Move later"]].map(([delta, label]) => {
+                  const index = draft.menu.findIndex(entry => entry.id === item.id);
+                  const target = index + Number(delta);
+                  return <button key={label} className="admin-small-button" disabled={target < 0 || target >= draft.menu.length} onClick={() => {
+                    const menu = [...draft.menu];
+                    [menu[index], menu[target]] = [menu[target], menu[index]];
+                    change({ ...draft, menu });
+                  }}>{label}</button>;
+                })}
+              </div>
+              <label className="admin-checkbox"><input type="checkbox" checked={!!item.seasonal} onChange={e => update({ seasonal: e.target.checked })} />Seasonal dish</label>
+              <label className="admin-checkbox"><input type="checkbox" checked={!!item.recommended} onChange={e => update({ recommended: e.target.checked })} />Chef’s recommendation</label>
+              <p className="admin-help">Upload photographs in Media, then select one above. Category order follows the list; reassign items before removing a category.</p>
               <label className="admin-checkbox">
                 <input
                   type="checkbox"
@@ -711,7 +725,7 @@ export function MenuEditor({ draft, change }: EditorProps) {
                   checked={item.featured}
                   onChange={(e) => update({ featured: e.target.checked })}
                 />
-                Feature in the signature ritual
+                Signature dish / feature in the signature ritual
               </label>
               <button
                 className="admin-danger-link"

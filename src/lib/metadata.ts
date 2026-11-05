@@ -11,7 +11,7 @@ export function pageMetadata(id: PageId, path: string): Metadata {
   const title =
     id === "home"
       ? "Da Duke and Chai | A European state of mind. A Himalayan cup of soul."
-      : `${pageLinks.find((link) => link.id === id)?.label || "The Gallery"} | Da Duke and Chai`;
+      : `${pageLinks.find((link) => link.id === id)?.label || (id === "table" ? "The Table" : "The Journal")} | Da Duke and Chai`;
   const description = initialContent.pages[id].description;
   return {
     title,

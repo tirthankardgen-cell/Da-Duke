@@ -7,6 +7,7 @@ import "@fontsource-variable/manrope";
 import "./globals.css";
 import "./pages.css";
 import "./journey.css";
+import "./the-carte/carte.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(

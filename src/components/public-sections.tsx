@@ -24,6 +24,7 @@ const pageSketches: Record<PageId, SketchKind> = {
   home: "rome",
   house: "florence",
   table: "paris",
+  carte: "tea",
   gatherings: "rome",
   private: "florence",
   visit: "hills",
@@ -157,7 +158,7 @@ export function HousePreview({ extended = false }: { extended?: boolean }) {
             <p>{copy.body}</p>
             <Link
               className="text-link"
-              href={extended ? "/gallery" : "/the-house"}
+              href={extended ? "/the-journal" : "/the-house"}
             >
               {extended ? "A glimpse of the atmosphere" : copy.linkLabel}
               <Arrow />
@@ -194,7 +195,7 @@ export function HousePreview({ extended = false }: { extended?: boolean }) {
                 </h2>
                 <p>{sections.ritual.body}</p>
                 <p>{sections.ritual.description}</p>
-                <Link href="/the-table" className="text-link">
+                <Link href="/the-carte" className="text-link">
                   {sections.ritual.linkLabel}
                   <Arrow />
                 </Link>
@@ -295,7 +296,7 @@ export function RitualSection({ full = false }: { full?: boolean }) {
               </a>
             )
           ) : (
-            <Link href="/the-table" className="text-link">
+            <Link href="/the-carte" className="text-link">
               {copy.linkLabel}
               <Arrow />
             </Link>
@@ -344,7 +345,7 @@ export function GallerySection({ full = false }: { full?: boolean }) {
       <div className="shell">
         {!full && (
           <SectionHeading id="gallery-title" copy={sections.gallery}>
-            <Link className="text-link" href="/gallery">
+            <Link className="text-link" href="/the-journal">
               {sections.gallery.linkLabel}
               <Arrow />
             </Link>

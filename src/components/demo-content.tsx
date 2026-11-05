@@ -27,7 +27,7 @@ function isContent(value: unknown): value is SiteContent {
     !!content.settings &&
     Array.isArray(content.settings.hours) &&
     !!content.pages &&
-    Object.keys(initialContent.pages).every((key) => key in content.pages) &&
+    Object.keys(initialContent.pages).filter((key) => key !== "carte").every((key) => key in content.pages) &&
     !!content.sections &&
     Object.keys(initialContent.sections).every(
       (key) => key in content.sections,
@@ -41,13 +41,17 @@ function isContent(value: unknown): value is SiteContent {
   );
 }
 
+function migrate(content: SiteContent): SiteContent {
+  return { ...content, pages: { ...initialContent.pages, ...content.pages } };
+}
+
 function readStorage() {
   try {
     const saved = JSON.parse(
       localStorage.getItem(STORAGE_KEY) || "null",
     ) as DemoState | null;
     return saved && isContent(saved.published) && isContent(saved.draft)
-      ? saved
+      ? { ...saved, published: migrate(saved.published), draft: migrate(saved.draft) }
       : serverState;
   } catch {
     return serverState;

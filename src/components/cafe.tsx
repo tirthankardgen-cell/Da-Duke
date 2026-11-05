@@ -1,5 +1,6 @@
 "use client";
 
+import Carte from "@/components/carte";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
@@ -266,12 +267,6 @@ export default function Cafe({
               <Arrow />
             </Link>
           ))}
-          <Link href="/gallery" onClick={() => setNavOpen(false)}>
-            <span>
-              <i>06</i>The Gallery
-            </span>
-            <Arrow />
-          </Link>
         </nav>
       </header>
       <main id="main" tabIndex={-1} className={`${page}-page`}>
@@ -294,6 +289,7 @@ export default function Cafe({
             {[
               "house",
               "table",
+              "carte",
               "gatherings",
               "private",
               "visit",
@@ -306,6 +302,7 @@ export default function Cafe({
                 <VisitSection />
               </>
             )}
+            {page === "carte" && <Carte />}
             {page === "table" && (
               <>
                 <RitualSection full />
@@ -372,7 +369,6 @@ export default function Cafe({
                     {link.label}
                   </Link>
                 ))}
-                <Link href="/gallery">The Gallery</Link>
               </div>
             </div>
             <div className="footer-note">

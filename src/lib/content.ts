@@ -2,6 +2,7 @@ export type PageId =
   | "home"
   | "house"
   | "table"
+  | "carte"
   | "gatherings"
   | "private"
   | "visit"
@@ -47,6 +48,8 @@ export type MenuItem = {
   price: string;
   dietary: string;
   featured: boolean;
+  seasonal?: boolean;
+  recommended?: boolean;
   available: boolean;
 };
 
@@ -98,9 +101,10 @@ export type SiteContent = {
 
 export const pageLinks: { id: PageId; label: string; href: string }[] = [
   { id: "house", label: "The House", href: "/the-house" },
-  { id: "table", label: "The Table", href: "/the-table" },
+  { id: "carte", label: "The Carte", href: "/the-carte" },
   { id: "gatherings", label: "Gatherings", href: "/gatherings" },
   { id: "private", label: "Private Affairs", href: "/private-affairs" },
+  { id: "gallery", label: "The Journal", href: "/the-journal" },
   { id: "visit", label: "Visit Us", href: "/visit-us" },
 ];
 
@@ -150,7 +154,7 @@ export const initialContent: SiteContent = {
     photoNotice:
       "A visual moodboard. Photography illustrates the concept, rather than the actual café.",
     menuNotice:
-      "A taste of the idea. These are sample selections; the café’s menu and prices are still to come.",
+      "A taste of the idea. These selections and prices are illustrative demo content, not the café’s confirmed menu.",
   },
   pages: {
     home: {
@@ -166,6 +170,12 @@ export const initialContent: SiteContent = {
       accent: "between places.",
       description:
         "A little European romance. A little mountain mist. A space for conversations worth staying for.",
+    },
+    carte: {
+      eyebrow: "THE CARTE · FROM OUR KITCHEN & TEA ROOM",
+      title: "The Carte",
+      accent: "",
+      description: "A little European indulgence, a little Himalayan soul.",
     },
     table: {
       eyebrow: "CHAPTER II · THE TABLE",
@@ -298,7 +308,7 @@ export const initialContent: SiteContent = {
       body: "The pleasure of a conversation with no particular destination. Come as you are, find a comfortable corner, and let the afternoon unfold.",
     },
   ],
-  menuCategories: ["Chai & Tea", "Coffee", "Small Plates", "Desserts"],
+  menuCategories: ["Chai & Tea", "Coffee", "Breakfast", "Small Plates", "European Classics", "Mains", "Desserts", "House Specials"],
   menu: [
     {
       id: "chai",
@@ -307,7 +317,7 @@ export const initialContent: SiteContent = {
         "The idea of a slow-simmered, gently spiced cup. A little comfort, held in both hands.",
       category: "Chai & Tea",
       image: "tea",
-      price: "",
+      price: "180",
       dietary: "",
       featured: true,
       available: true,
@@ -319,7 +329,7 @@ export const initialContent: SiteContent = {
         "A lighter tea ritual, inspired by the mist and tea culture of the hills.",
       category: "Chai & Tea",
       image: "tea",
-      price: "",
+      price: "220",
       dietary: "",
       featured: false,
       available: true,
@@ -331,7 +341,7 @@ export const initialContent: SiteContent = {
         "An espresso and soft milk. For the days when your pause calls for coffee.",
       category: "Coffee",
       image: "table",
-      price: "",
+      price: "190",
       dietary: "",
       featured: false,
       available: true,
@@ -343,7 +353,7 @@ export const initialContent: SiteContent = {
         "Golden layers and the pleasure of a leisurely breakfast. An idea from the café kitchen.",
       category: "Small Plates",
       image: "croissant",
-      price: "",
+      price: "240",
       dietary: "",
       featured: true,
       available: true,
@@ -355,11 +365,15 @@ export const initialContent: SiteContent = {
         "A slice for the table, another fork, and just enough room for something sweet.",
       category: "Desserts",
       image: "cake",
-      price: "",
+      price: "280",
       dietary: "",
       featured: true,
       available: true,
     },
+    {"id": "breakfast", "name": "Herb butter eggs on toast", "description": "Sourdough, soft eggs and herb butter. A leisurely start to the day.", "category": "Breakfast", "price": "320", "image": "", "dietary": "", "featured": false, "available": true, "seasonal": false, "recommended": false},
+    {"id": "tart", "name": "Roasted tomato tart", "description": "Delicate pastry, slow-roasted tomatoes, cheese and basil.", "category": "European Classics", "price": "380", "image": "", "dietary": "", "featured": false, "available": true, "seasonal": false, "recommended": false},
+    {"id": "risotto", "name": "Woodland mushroom risotto", "description": "Creamy arborio rice, saut\u00e9ed mushrooms and parmesan.", "category": "Mains", "price": "480", "image": "", "dietary": "", "featured": false, "available": true, "seasonal": false, "recommended": true},
+    {"id": "custard", "name": "The tea garden cr\u00e8me", "description": "Assam tea-infused custard beneath a delicate caramel crust.", "category": "House Specials", "price": "290", "image": "", "dietary": "", "featured": false, "available": true, "seasonal": true, "recommended": false},
   ],
   media: [
     {

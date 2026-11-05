@@ -155,7 +155,7 @@ function StudioWorkspace() {
     if (!save()) return;
     const route = slug
       ? `/preview?event=${encodeURIComponent(slug)}`
-      : `/preview?page=${tab === "events" ? "gatherings" : tab === "menu" ? "table" : tab === "media" ? "gallery" : tab === "settings" ? "visit" : "home"}`;
+      : `/preview?page=${tab === "events" ? "gatherings" : tab === "menu" ? "carte" : tab === "media" ? "gallery" : tab === "settings" ? "visit" : "home"}`;
     const popup = window.open(route, "_blank");
     if (popup) popup.opener = null;
     report(
