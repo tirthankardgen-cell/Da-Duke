@@ -50,16 +50,6 @@ function chapterSnapshot() {
   return window.location.hash.slice(1) || "contents";
 }
 
-function subscribeToSinglePage(notify: () => void) {
-  const query = window.matchMedia("(max-width: 900px)");
-  query.addEventListener("change", notify);
-  return () => query.removeEventListener("change", notify);
-}
-
-function singlePageSnapshot() {
-  return window.matchMedia("(max-width: 900px)").matches;
-}
-
 function ChapterLink({
   href,
   children,
@@ -112,24 +102,22 @@ export default function Storybook({ preview = false }: { preview?: boolean }) {
     chapterSnapshot,
     () => "contents",
   );
-  const [requestedChapter, requestedSide] = location.split("/");
-  const singlePage = useSyncExternalStore(
-    subscribeToSinglePage,
-    singlePageSnapshot,
-    () => false,
-  );
-  const readingSide: Side = requestedSide === "right" ? "right" : "left";
+  // Older links to a single facing page now open its complete spread.
+  const requestedChapter = location.split("/")[0];
   const active: ChapterId = chapterIds.includes(requestedChapter as ChapterId)
     ? (requestedChapter as ChapterId)
     : "contents";
   const activeIndex = chapterIds.indexOf(active);
   const [turn, setTurn] = useState<PageTurn | null>(null);
   const [still, setStill] = useState(false);
+  const [readerOpen, setReaderOpen] = useState(false);
   const [opening, setOpening] = useState<"closed" | "opening" | "open">(
     preview ? "open" : "closed",
   );
   const main = useRef<HTMLElement>(null);
   const book = useRef<HTMLDivElement>(null);
+  const reader = useRef<HTMLDialogElement>(null);
+  const readerBody = useRef<HTMLDivElement>(null);
   const turnLocked = useRef(false);
   const restoreFocus = useRef(false);
   const touch = useRef<{ x: number; y: number } | null>(null);
@@ -170,15 +158,27 @@ export default function Storybook({ preview = false }: { preview?: boolean }) {
     return () => window.clearTimeout(timer);
   }, [opening, finishOpening]);
 
+  useEffect(() => {
+    const dialog = reader.current;
+    if (!dialog) return;
+    if (readerOpen) {
+      if (!dialog.open) dialog.showModal();
+      readerBody.current?.scrollTo({ top: 0, behavior: "instant" });
+    } else if (!readerOpen && dialog.open) {
+      dialog.close();
+    }
+  }, [readerOpen, active]);
+
   const goTo = useCallback(
-    (next: ChapterId, side: Side = "left") => {
+    (next: ChapterId) => {
       if (turnLocked.current || !chapterIds.includes(next)) return;
+      setReaderOpen(false);
       if (opening !== "open") finishOpening();
-      if (next === active && (!singlePage || side === readingSide)) return;
+      if (next === active) return;
       const reduceMotion =
         still || window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       restoreFocus.current = !!book.current?.contains(document.activeElement);
-      if (!singlePage && !reduceMotion && opening === "open") {
+      if (!reduceMotion && opening === "open") {
         turnLocked.current = true;
         setTurn({
           from: active,
@@ -190,10 +190,10 @@ export default function Storybook({ preview = false }: { preview?: boolean }) {
       window.history.pushState(
         null,
         "",
-        `${window.location.pathname}${window.location.search}#${next}${singlePage && side === "right" ? "/right" : ""}`,
+        `${window.location.pathname}${window.location.search}#${next}`,
       );
       window.dispatchEvent(new Event(chapterEvent));
-      if (singlePage || reduceMotion) finishTurn();
+      if (reduceMotion) finishTurn();
     },
     [
       active,
@@ -201,8 +201,6 @@ export default function Storybook({ preview = false }: { preview?: boolean }) {
       chapterIds,
       finishTurn,
       still,
-      singlePage,
-      readingSide,
       opening,
       finishOpening,
     ],
@@ -214,27 +212,10 @@ export default function Storybook({ preview = false }: { preview?: boolean }) {
         openBook();
         return;
       }
-      if (singlePage && direction === 1 && readingSide === "left") {
-        goTo(active, "right");
-        return;
-      }
-      if (singlePage && direction === -1 && readingSide === "right") {
-        goTo(active, "left");
-        return;
-      }
       const next = chapterIds[activeIndex + direction];
-      if (next) goTo(next, direction === -1 ? "right" : "left");
+      if (next) goTo(next);
     },
-    [
-      opening,
-      openBook,
-      singlePage,
-      readingSide,
-      goTo,
-      active,
-      chapterIds,
-      activeIndex,
-    ],
+    [opening, openBook, goTo, chapterIds, activeIndex],
   );
 
   useEffect(() => {
@@ -251,7 +232,9 @@ export default function Storybook({ preview = false }: { preview?: boolean }) {
     const measure = () => {
       for (const page of pages) {
         // Measurement only affects keyboard access, never the page's width.
-        const overflow = page.scrollHeight > page.clientHeight + 2;
+        const overflow =
+          getComputedStyle(page).overflowY === "auto" &&
+          page.scrollHeight > page.clientHeight + 2;
         if (page.dataset.overflow !== String(overflow)) {
           page.dataset.overflow = String(overflow);
           page.tabIndex = overflow ? 0 : -1;
@@ -312,8 +295,7 @@ export default function Storybook({ preview = false }: { preview?: boolean }) {
         "[data-book-scroll]",
       );
       if (
-        scrollingPage &&
-        scrollingPage.scrollHeight > scrollingPage.clientHeight + 2 &&
+        scrollingPage?.dataset.overflow === "true" &&
         ((delta > 0 &&
           scrollingPage.scrollTop + scrollingPage.clientHeight <
             scrollingPage.scrollHeight - 2) ||
@@ -607,10 +589,6 @@ export default function Storybook({ preview = false }: { preview?: boolean }) {
       <section
         key={`${id}-${side}`}
         className={`${styles.sheet} ${side === "left" ? styles.leftSheet : styles.rightSheet}`}
-        inert={!decorative && singlePage && side !== readingSide}
-        aria-hidden={
-          !decorative && singlePage && side !== readingSide ? true : undefined
-        }
         aria-label={
           decorative
             ? undefined
@@ -638,14 +616,12 @@ export default function Storybook({ preview = false }: { preview?: boolean }) {
   const leftChapter = turn?.direction === "forward" ? turn.from : active;
   const rightChapter = turn?.direction === "backward" ? turn.from : active;
   const firstPage = activeIndex * 2 + 2;
-  const currentPage = firstPage + (readingSide === "right" ? 1 : 0);
-  const hasPrevious =
-    opening === "open" &&
-    (activeIndex > 0 || (singlePage && readingSide === "right"));
-  const hasNext =
-    opening !== "open" ||
-    activeIndex < chapterIds.length - 1 ||
-    (singlePage && readingSide === "left");
+  const hasPrevious = opening === "open" && activeIndex > 0;
+  const hasNext = opening !== "open" || activeIndex < chapterIds.length - 1;
+  const chapterLabel =
+    active === "contents"
+      ? "A tale of two worlds"
+      : bookChapterLabels[active].label;
 
   return (
     <div
@@ -703,8 +679,18 @@ export default function Storybook({ preview = false }: { preview?: boolean }) {
             </button>
           ))}
         </nav>
-        <Link className={styles.headerCta} href="/private-affairs#enquire">
+        <Link
+          className={`${styles.headerCta} ${styles.desktopHeaderCta}`}
+          href="/private-affairs#enquire"
+        >
           Plan an occasion
+          <Arrow />
+        </Link>
+        <Link
+          className={`${styles.headerCta} ${styles.mobileHeaderCta}`}
+          href="/the-carte"
+        >
+          View menu
           <Arrow />
         </Link>
       </header>
@@ -724,7 +710,6 @@ export default function Storybook({ preview = false }: { preview?: boolean }) {
               className={styles.book}
               role="group"
               aria-label="An open book of two worlds"
-              data-side={readingSide}
               aria-busy={!!turn || opening === "opening"}
               onTouchStart={(event) => {
                 const point = event.touches[0];
@@ -835,6 +820,27 @@ export default function Storybook({ preview = false }: { preview?: boolean }) {
               )}
             </div>
           </div>
+          <div
+            className={styles.readerActions}
+            aria-hidden={opening !== "open" ? true : undefined}
+          >
+            <div>
+              <span>
+                CHAPTER {String(activeIndex + 1).padStart(2, "0")} /{" "}
+                {String(chapterIds.length).padStart(2, "0")}
+              </span>
+              <p>{chapterLabel}</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setReaderOpen(true)}
+              disabled={opening !== "open" || !!turn}
+              aria-haspopup="dialog"
+              aria-controls="storybook-reader"
+            >
+              Read chapter <Arrow />
+            </button>
+          </div>
         </div>
         <div className={styles.bookControls}>
           <p className={styles.readingHint}>
@@ -855,9 +861,7 @@ export default function Storybook({ preview = false }: { preview?: boolean }) {
             <span className={styles.folio}>
               {opening !== "open"
                 ? "VOLUME ONE"
-                : singlePage
-                  ? `p. ${String(currentPage).padStart(2, "0")}`
-                  : `pp. ${String(firstPage).padStart(2, "0")} — ${String(firstPage + 1).padStart(2, "0")}`}
+                : `pp. ${String(firstPage).padStart(2, "0")} — ${String(firstPage + 1).padStart(2, "0")}`}
             </span>
             <span className={styles.progressTrack} aria-hidden="true">
               <span
@@ -902,10 +906,7 @@ export default function Storybook({ preview = false }: { preview?: boolean }) {
               {active === "contents"
                 ? "Contents"
                 : bookChapterLabels[active].label}
-              .{" "}
-              {singlePage
-                ? `Page ${currentPage}.`
-                : `Pages ${firstPage} and ${firstPage + 1}.`}
+              . Pages {firstPage} and {firstPage + 1}.
             </>
           )}
         </p>
@@ -931,6 +932,48 @@ export default function Storybook({ preview = false }: { preview?: boolean }) {
           <Link href="/privacy">Privacy</Link>
         </div>
       </footer>
+      <dialog
+        id="storybook-reader"
+        ref={reader}
+        className={styles.readerDialog}
+        aria-labelledby="storybook-reader-title"
+        onCancel={() => setReaderOpen(false)}
+        onClose={() => setReaderOpen(false)}
+        onClick={(event) => {
+          if (event.target === event.currentTarget) setReaderOpen(false);
+        }}
+      >
+        <div className={styles.readerHeader}>
+          <h2 id="storybook-reader-title">{chapterLabel}</h2>
+          <button type="button" onClick={() => setReaderOpen(false)}>
+            Back to book <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div
+          className={styles.readerBody}
+          ref={readerBody}
+          role="region"
+          aria-label="Full chapter"
+          tabIndex={0}
+        >
+          {readerOpen && (
+            <div className={styles.readerPages}>
+              <section
+                className={styles.readerPaper}
+                aria-label={`${chapterLabel}, story`}
+              >
+                {pageContent(active, "left")}
+              </section>
+              <section
+                className={styles.readerPaper}
+                aria-label={`${chapterLabel}, photographs and notes`}
+              >
+                {pageContent(active, "right")}
+              </section>
+            </div>
+          )}
+        </div>
+      </dialog>
     </div>
   );
 }
