@@ -94,6 +94,7 @@ export default function JourneyHero({
   const copy = pages.home;
   const section = useRef<HTMLElement>(null);
   const [chapter, setChapter] = useState(0);
+  const [complete, setComplete] = useState(false);
   const still = paused;
   useEffect(() => {
     const el = section.current;
@@ -122,6 +123,7 @@ export default function JourneyHero({
       el.style.setProperty("--cloud", String(clouds * (1 - home)));
       el.style.setProperty("--home", String(home));
       el.style.setProperty("--progress", `${p * 100}%`);
+      setComplete(p >= 0.999);
       setChapter(p < 0.28 ? 0 : p < 0.55 ? 1 : p < 0.78 ? 2 : 3);
     };
     const schedule = () => {
@@ -143,6 +145,7 @@ export default function JourneyHero({
       ref={section}
       className="journey-section"
       data-still={still}
+      data-complete={complete}
       aria-label="From a Roman daydream to a Himalayan cup of soul"
     >
       <div className="journey-sticky">
@@ -155,7 +158,7 @@ export default function JourneyHero({
           <i />
         </div>
         <Landscape kind="cafe" />
-        <div className="journey-intro">
+        <div className="journey-home-copy" inert={!complete} aria-hidden={!complete}>
           <p className="journey-kicker">{copy.eyebrow}</p>
           <h1 className="journey-opening">
             {copy.title}
@@ -163,47 +166,13 @@ export default function JourneyHero({
             <em>{copy.accent}</em>
           </h1>
           <p className="journey-description">{copy.description}</p>
-          <div className="journey-actions" inert={chapter !== 0}>
+          <div className="journey-actions">
             <Link href="/the-house" className="button button-green">
-              Explore the House
-              <Arrow />
+              Explore the House <Arrow />
             </Link>
             <Link href="/gatherings" className="journey-secondary">
-              See What’s On
-              <Arrow />
+              See What’s On <Arrow />
             </Link>
-          </div>
-        </div>
-        <div className="journey-hill-copy" aria-hidden="true">
-          <span>ASSAM · DARJEELING · NORTH BENGAL</span>
-          <p>
-            A slower rhythm.
-            <br />
-            <em>A little mountain mist.</em>
-          </p>
-        </div>
-        <div className="journey-home-copy" inert={chapter !== 3}>
-          <p className="journey-kicker">
-            DA DUKE <span className="journey-small-brand">and Chai</span>
-          </p>
-          <p className="journey-home-heading">
-            A European state of mind.
-            <br />
-            <em>A Himalayan cup of soul.</em>
-          </p>
-          <p>
-            Good food. A thoughtful cup.
-            <br />
-            And nowhere else you need to be.
-          </p>
-          <div className="journey-actions">
-            <Link href="/the-table" className="button button-green">
-              Discover the Table <Arrow />
-            </Link>
-            <a className="journey-secondary" href="#welcome">
-              Wander inside
-              <Arrow />
-            </a>
           </div>
         </div>
         <div className="journey-footer">

@@ -139,7 +139,9 @@
   margin-top: 25px;
 }
 .journey-home-copy {
-  opacity: var(--home);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 450ms ease;
   background: radial-gradient(
     ellipse at 50% 45%,
     #f3eee4 5%,
@@ -360,4 +362,13 @@
   .journey-scroll {
     display: none;
   }
+}
+
+/* Copy and interactive links appear only after the complete scroll sequence. */
+.journey-section[data-complete="true"] .journey-home-copy {
+  opacity: 1;
+  visibility: visible;
+}
+@media (prefers-reduced-motion: reduce) {
+  .journey-home-copy { transition: none; }
 }
