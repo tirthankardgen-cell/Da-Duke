@@ -1495,3 +1495,18 @@ dialog::backdrop {
 .header-cta svg { color: var(--coral); }
 .desktop-nav a::after { background: var(--coral); }
 ::selection { background: var(--coral); color: #0e302d; }
+
+/* Slightly stronger editorial hierarchy for the palette preview. */
+.site h1, .site h2 { font-weight: 500; }
+.site h3, .site h4 { font-weight: 600; }
+.site h1 em, .site h2 em, .site h3 em { font-weight: 500; }
+.site .brand-name { font-weight: 600; }
+.site .desktop-nav a, .site .mobile-nav a { font-weight: 600; }
+.site .button, .site .header-cta { font-weight: 650; }
+.site .text-link, .site .journey-secondary { font-weight: 600; }
+.site .eyebrow, .site .journey-kicker { font-weight: 700; }
+.site .desktop-nav a::after { height: 2px; }
+.site .header-cta { border-width: 1.5px; }
+.site .carte-category h2 { font-weight: 500; }
+.site .carte-item h3 { font-weight: 600; }
+.site .carte-filters button, .site .carte-item-title > span { font-weight: 600; }
